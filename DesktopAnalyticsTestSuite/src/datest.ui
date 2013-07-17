@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1398</width>
-    <height>1011</height>
+    <width>1625</width>
+    <height>1225</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,17 +43,26 @@
    <widget class="GLWidget" name="renderwidget" native="true">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>50</y>
+      <x>200</x>
+      <y>40</y>
       <width>1000</width>
       <height>1000</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="minimumSize">
      <size>
       <width>200</width>
       <height>200</height>
      </size>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
@@ -62,7 +71,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1398</width>
+     <width>1625</width>
      <height>21</height>
     </rect>
    </property>
