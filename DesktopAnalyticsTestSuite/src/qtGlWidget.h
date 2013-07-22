@@ -13,6 +13,7 @@ public:
     GLWidget( const QGLFormat& format, QWidget* parent = 0 );
 	GLWidget( QWidget* parent =0);
 	public slots:
+		void toggleNode();
 		
 		
 protected:

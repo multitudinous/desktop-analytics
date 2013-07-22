@@ -120,6 +120,12 @@ void GLWidget::resizeGL( int w, int h )
     di->reshape( w, h );
 }
 
+
+void GLWidget::toggleNode() {
+	di->toggleSecondNodeMask();
+	updateGL();
+}
+
 void GLWidget::keyPressEvent( QKeyEvent* e )
 {
     switch ( e->key() )
@@ -285,7 +291,8 @@ int main( int argc, char** argv )
 	ui.setupUi(window);
 	ui.renderwidget->show();
 	ui.pushButton->show();
-	QObject::connect(ui.pushButton, SIGNAL(clicked()), ui.renderwidget, SLOT(dosomething()));
+	//QObject::connect(ui.pushButton, SIGNAL(clicked()), ui.renderwidget, SLOT(dosomething()));
+	QObject::connect(ui.toggleNodeButton, SIGNAL(clicked()), ui.renderwidget, SLOT(toggleNode()));
 	window->show();
 
     if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )

@@ -27,6 +27,10 @@ public:
 		currentAngle+=inc;
 	}
 
+	virtual void toggleSecondNodeMask() {
+		secondNode->setNodeMask(!(secondNode->getNodeMask()));
+	}
+
 protected:
     gmtl::Matrix44d computeProjection( double aspect );
     gmtl::Matrix44d computeView();
@@ -35,7 +39,7 @@ protected:
     std::string _fileName;
 
     jagSG::NodePtr _root;
-
+	jagSG::NodePtr secondNode;
 	typedef jagDraw::PerContextData< double > PerContextAspect;
     PerContextAspect _aspect;
 

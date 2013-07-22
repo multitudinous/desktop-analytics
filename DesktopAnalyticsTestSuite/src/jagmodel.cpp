@@ -37,6 +37,7 @@
 #include <jagBase/LogMacros.h>
 #include <jagSG/Common.h>
 #include <jagUtil/Shapes.h>
+#include <jagSG/NodeMaskCullCallback.h>
 
 
 #include <boost/program_options/options_description.hpp>
@@ -101,14 +102,19 @@ bool JagModel::startup( const unsigned int numContexts )
     jagSG::NodePtr model( boost::make_shared< jagSG::Node >(
         *(jagSG::Node*) jagDisk::read( _fileName ) ) );
     _root->addChild( model );
-	
-	
+	secondNode = jagSG::NodePtr ( new jagSG::Node() );;
+	secondNode->setTransform(gmtl::makeTrans<gmtl::Matrix44d>(gmtl::Vec3d(0,20,0)));
+	secondNode->addChild(model);
+	_root->addChild(secondNode);
 	
     if( _root == NULL )
     {
         JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _fileName + "\"." );
         return( false );
     }
+
+	jagSG::NodeMaskCullDistributionVisitor nmdv;
+    _root->accept( nmdv );
 
     jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
@@ -274,8 +280,7 @@ void JagModel::reshape( const int w, const int h )
         return;
 
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
-    //_proj._data[ contextID ] = computeProjection( (double)w/(double)h );
-	_aspect._data[ contextID ] = ( double ) w / ( double ) h;
+    _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
 }
 
 gmtl::Matrix44d JagModel::computeProjection( double aspect )
