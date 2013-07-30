@@ -21,6 +21,9 @@ int main( int argc, char* argv[] )
         std::cout << "Usage: jtToive <file to load> " << std::endl;
         return 1;
     }
+    
+    osgDB::Registry::instance()->loadLibrary( "osgdb_PolyTrans.dll" );
+    
     //read in osg file
     osg::ref_ptr< osg::Node > tempCADNode = osgDB::readNodeFile( argv[ 1 ] );
     if( !tempCADNode.valid() )
