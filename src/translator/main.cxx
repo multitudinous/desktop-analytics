@@ -1,8 +1,10 @@
 #include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
 #include <osgDB/Registry>
 #include <osgDB/ReaderWriter>
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
+
 #include <osg/Node>
 
 #include <iostream>
