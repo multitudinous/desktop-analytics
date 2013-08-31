@@ -14,6 +14,16 @@
 
 #include "RemoveNodeNameVisitor.h"
 
+#include <crunchstore/Persistable.h>
+#include <crunchstore/Datum.h>
+#include <crunchstore/DataManager.h>
+#include <crunchstore/NullBuffer.h>
+#include <crunchstore/NullCache.h>
+#include <crunchstore/DataAbstractionLayer.h>
+#include <crunchstore/SQLiteStore.h>
+
+using namespace crunchstore;
+
 int main( int argc, char* argv[] )
 {
     if( argc < 2 )
@@ -42,6 +52,37 @@ int main( int argc, char* argv[] )
     {
         std::cout << "Unable to write converted jt file." << std::endl;
     }
+    
+    // Set up a datamanager to test persistence
+    DataManager manager;
+    DataAbstractionLayerPtr cache( new NullCache );
+    DataAbstractionLayerPtr buffer( new NullBuffer );
+    manager.SetCache( cache );
+    manager.SetBuffer( buffer );
+    
+#ifndef USE_MONGODB
+    // Add an SQLite store
+    //DataAbstractionLayerPtr sqstore( new SQLiteStore );
+    //static_cast<SQLiteStore*>(sqstore.get())->SetStorePath( "/tmp/DALTest.db" );
+    SQLiteStorePtr sqstore( new SQLiteStore );
+    sqstore->SetStorePath( "/tmp/DALTest.db" );
+    manager.AttachStore( sqstore, Store::WORKINGSTORE_ROLE );
+#else
+    // Add a mongoDB store
+    DataAbstractionLayerPtr mongostore( new MongoStore );
+    static_cast<MongoStore*>(mongostore.get())->SetStorePath("localhost");
+    //manager.AttachStore( mongostore, Store::BACKINGSTORE_ROLE );
+    manager.AttachStore( mongostore, Store::WORKINGSTORE_ROLE );
+#endif
+    
+    // Build up a persistable with some useful test types
+    Persistable q;
+    q.SetTypeName( "TestType" );
+    q.AddDatum( "Num", 1234.98735 );
+    q.AddDatum( "ABool", true );
+    q.AddDatum( "AString", std::string("This is a test") );
+    q.AddDatum( "AnInt", 19 );
+
 
     return 0;
 }

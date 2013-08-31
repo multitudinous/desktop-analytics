@@ -33,6 +33,11 @@ find_package(Boost 1.53.0 REQUIRED COMPONENTS filesystem system regex)
 include(FindOSGHelper)
 find_package( OpenGL )
 
+find_package( crunchstore 0.2.0 REQUIRED )
+if( crunchstore_FOUND )
+    include( ${crunchstore_USE_FILE} )
+endif(crunchstore_FOUND)
+
 include_directories( 
     ${Boost_INCLUDE_DIRS}
     ${POCO_INCLUDE_DIR})

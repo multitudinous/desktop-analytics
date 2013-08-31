@@ -16,6 +16,7 @@ add_executable(${VES_TARGET_NAME} ${srcs} ${VES_PUBLIC_HEADERS})
 target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${POCO_LIBRARIES})
 target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${OSG_LIBRARIES})
 target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
+target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${crunchstore_LIBRARIES})
 
 include(VESModuleInstall)
 
