@@ -31,7 +31,13 @@ int main( int argc, char* argv[] )
         std::cout << "Usage: jtToive <file to load> " << std::endl;
         return 1;
     }
-    
+
+    std::string outDir;
+    if( argc == 3 )
+    {
+        outDir = argv[ 2 ];
+    }
+
     osgDB::Registry::instance()->loadLibrary( "osgdb_PolyTrans.dll" );
     
     //read in osg file
@@ -42,15 +48,29 @@ int main( int argc, char* argv[] )
         return 1;
     }
     
-    boost::filesystem::path p( argv[ 1 ] );
-    p.replace_extension( "ive" );
+    boost::filesystem::path outPath;
+    if( argc < 3 )
+    {
+        outPath = boost::filesystem::path( argv[ 1 ] );
+        outPath.replace_extension( "ive" );
+    }
+    else
+    {
+        boost::filesystem::path p( argv[ 1 ] );
+        outPath = boost::filesystem::path( argv[ 2 ] );
+        outPath += p.filename();
+        outPath.replace_extension( "ive" );
+    }
     //Remove crufty names from polytrans conversion
     ves::xplorer::scenegraph::util::RemoveNodeNameVisitor polyTransCleanup( tempCADNode.get(), "", "" );
 
-    bool success = osgDB::writeNodeFile( *tempCADNode.get(), p.string() );
-    if( !success )
+    if( !osgDB::writeNodeFile( *tempCADNode.get(), outPath.string() ) )
     {
         std::cout << "Unable to write converted jt file." << std::endl;
+    }
+    else
+    {
+        std::cout << "Writing file " << outPath.string() << std::endl;
     }
     
     // Set up a datamanager to test persistence
@@ -82,7 +102,6 @@ int main( int argc, char* argv[] )
     q.AddDatum( "ABool", true );
     q.AddDatum( "AString", std::string("This is a test") );
     q.AddDatum( "AnInt", 19 );
-
 
     return 0;
 }
