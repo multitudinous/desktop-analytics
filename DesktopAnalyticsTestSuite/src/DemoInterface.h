@@ -23,13 +23,20 @@
 
 
 #include <jagDraw/DrawInfo.h>
+#include <jagDraw/Shader.h>
+#include <jagDraw/Image.h>
+#include <jagSG/Node.h>
 #include <jagSG/CollectionVisitor.h>
 #include <jagMx/MxCore.h>
+#include <jagDisk/ReadWrite.h>
+#include <jagBase/LogMacros.h>
+
 #include <gmtl/gmtl.h>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/foreach.hpp>
+#include <boost/any.hpp>
 
 
 /** \class DemoInterface DemoInterface.h DemoInterface.h
@@ -86,10 +93,16 @@ public:
         return( _collectionVisitor );
     }
 
-    jagMx::MxCorePtr& getMxCore( const jagDraw::jagDrawContextID contextID )
+    jagMx::MxCorePtr getMxCore( const jagDraw::jagDrawContextID contextID )
     {
-        return( _mxCore._data[ contextID ] );
+        if( _mxCore._data.empty() )
+            return( jagMx::MxCorePtr( (jagMx::MxCore*)NULL ) );
+        else
+            return( _mxCore._data[ contextID ] );
     }
+
+    // Return a value to bontrol base gamepad move rate in the scene.
+    virtual double getMoveRate() const { return( 1. ); }
 
 protected:
     std::string _logName;
@@ -102,6 +115,43 @@ protected:
 
     typedef jagDraw::PerContextData< jagMx::MxCorePtr > PerContextMxCore;
     PerContextMxCore _mxCore;
+
+
+
+#define __READ_UTIL( _RESULT, _TYPE, _NAME, _OPT ) \
+    { \
+        boost::any anyTemp( jagDisk::read( _NAME, _OPT ) ); \
+        try { \
+            _RESULT = boost::any_cast< _TYPE >( anyTemp ); \
+        } \
+        catch( boost::bad_any_cast bac ) \
+        { \
+            bac.what(); \
+        } \
+        if( _RESULT == NULL ) \
+        { \
+            JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _NAME + "\"." ); \
+        } \
+    }
+
+    jagSG::NodePtr readSceneGraphNodeUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
+    {
+        jagSG::NodePtr result;
+        __READ_UTIL( result, jagSG::NodePtr, fileName, options );
+        return( result );
+    }
+    jagDraw::ImagePtr readImageUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
+    {
+        jagDraw::ImagePtr result;
+        __READ_UTIL( result, jagDraw::ImagePtr, fileName, options );
+        return( result );
+    }
+    jagDraw::ShaderPtr readShaderUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
+    {
+        jagDraw::ShaderPtr result;
+        __READ_UTIL( result, jagDraw::ShaderPtr, fileName, options );
+        return( result );
+    }
 };
 
 

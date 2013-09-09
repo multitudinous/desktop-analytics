@@ -18,18 +18,15 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#define JAG3D_USE_GL3W
-#include "jagmodel.h"
-//#include "DemoInterface.h"
+#include <demoSupport/DemoInterface.h>
 #include <jagDraw/ContextSupport.h>
 #include <jagBase/Profile.h>
 
-#include "qtGlWidget.h"
+#include <demoSupport/qtGlWidget.h>
 #include <QApplication>
 #include <QGLFormat>
 #include <QCoreApplication>
 #include <QKeyEvent>
-#include <QTimer>
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -37,51 +34,18 @@
 #include <boost/foreach.hpp>
 
 #include <math.h>
-#include "ui_datest.h"
-#include <iostream>
 
-#include <jagMx/MxCore.h>
-#include <jagMx/MxUtils.h>
-#include <jagMx/MxGamePad.h>
 
 using namespace std;
 namespace bpo = boost::program_options;
 
 
-JagModel* di( NULL );
+DemoInterface* di( NULL );
 
 
 GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
     : QGLWidget( format, parent )
 {
-	_rightDrag = false;
-	_leftDrag = false;
-	_lastNX = 0;
-	_lastNY = 0;
-}
-
-QGLFormat getFormat() {
-	QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba | QGL::DepthBuffer | QGL::SampleBuffers );
-	double version = 4.0;
-	double versionMajor;
-    modf( version, &versionMajor );
-    float versionMinor = (float)( version * 10. - versionMajor * 10. );
-    if( version >= 3.0 )
-    {
-        glFormat.setVersion( int( versionMajor ), int( versionMinor ) );
-        //if( version >= 3.1 )
-            // Qt doesn't appear to allow setting the forward compatible flag.
-            // Do nothing in this case.
-        if( version >= 3.2 )
-            glFormat.setProfile( QGLFormat::CoreProfile );
-    }
-	return glFormat;
-}
-
-GLWidget::GLWidget(QWidget* parent)
-	: QGLWidget( getFormat(), parent)
-	{
-	
 }
 
 void GLWidget::initializeGL()
@@ -94,12 +58,11 @@ void GLWidget::initializeGL()
     cs->initContext();
 
     di->init();
-	
 }
 
 void GLWidget::paintGL()
 {
-    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() ); 
+    jagDraw::ContextSupport* cs( jagDraw::ContextSupport::instance() );
     const jagDraw::platformContextID pCtxId = reinterpret_cast< const jagDraw::platformContextID >( context() );
     jagDraw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
 
@@ -108,9 +71,11 @@ void GLWidget::paintGL()
 
 #ifdef JAG3D_ENABLE_PROFILING
     jagBase::ProfileManager::instance()->dumpAll();
+    jagBase::ProfileManager::instance()->reset();
 #endif
 
-	
+    if( di->getContinuousRedraw() )
+        update( rect() );
 }
 
 void GLWidget::resizeGL( int w, int h )
@@ -118,12 +83,6 @@ void GLWidget::resizeGL( int w, int h )
     glViewport( 0, 0, w, h );
     di->getCollectionVisitor().setViewport( 0, 0, w, h );
     di->reshape( w, h );
-}
-
-
-void GLWidget::toggleNode() {
-	di->toggleSecondNodeMask();
-	updateGL();
 }
 
 void GLWidget::keyPressEvent( QKeyEvent* e )
@@ -142,83 +101,6 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
     }
 }
 
-void normXY( float& normX, float& normY, const int x, const int y, const int width, const int height )
-{
-    // Given a width x height window, convert pixel coords x and y
-    // to normalized coords in the range -1 to 1. Invert Y so that
-    // -1 is at the window bottom.
-    const float halfW( (float)width * .5f );
-    const float halfH( (float)height * .5f );
-
-    normX = ( (float)x - halfW ) / halfW;
-    normY = -( (float)y - halfH ) / halfH;
-}
-
-void GLWidget::mousePressEvent(QMouseEvent* e) {
-
-	const int width( this->width() );
-	const int height( this->height() );
-	int x, y;
-	x = e->x();
-	y = e->y();
-
-	normXY( _lastNX, _lastNY, x, y, width, height );
-    _lastX = x;
-    _lastY = y;
-
-	
-	_leftDrag = e->buttons()&Qt::LeftButton;
-
-	
-	_rightDrag = e->buttons()&Qt::RightButton;
-
-}
-
-
-
-void GLWidget::mouseMoveEvent(QMouseEvent* e) {
-	if( !_leftDrag && !_rightDrag )
-        return;
-
-	int context = jagDraw::ContextSupport::instance()->getActiveContext();
-    //const int window( glutGetWindow() - 1 );
-    jagMx::MxCorePtr mxCore( di->getMxCore( context ) );
-    if( mxCore == NULL )
-        return;
-
-	const int width( this->width() );
-	const int height( this->height() );
-
-    float nx, ny;
-	int x, y;
-	x = e->x();
-	y = e->y();
-    normXY( nx, ny, x, y, width, height );
-    const float deltaX( nx - _lastNX );
-    const float deltaY( ny - _lastNY );
-
-    if( _rightDrag )
-    {
-        mxCore->moveOrbit( deltaY );
-    }
-    else if( _leftDrag )
-    {
-        double angle;
-        gmtl::Vec3d axis;
-        jagMx::computeTrackball( angle, axis,
-            gmtl::Vec2d( _lastNX, _lastNY ), gmtl::Vec2d( deltaX, deltaY ),
-            mxCore->getOrientationMatrix() );
-
-        mxCore->rotateOrbit( angle, axis );
-    }
-
-    _lastNX = nx;
-    _lastNY = ny;
-	updateGL();
-    
-	
-}
-
 
 
 int main( int argc, char** argv )
@@ -231,11 +113,12 @@ int main( int argc, char** argv )
         ( "version,v", bpo::value< double  >(), "OpenGL context version. Default: 4.0." )
         ( "nwin", bpo::value< int >(), "Number of windows. Default: 1." )
         ( "winsize,w", bpo::value< std::vector< int > >( &winsize )->multitoken(), "Window width and height. Default: 300 300." )
+        ( "no-ms", "Disable multisampling" )
         ;
 
     // Create test/demo-specific DemoInterface, and allow it to
     // add test/demo-specific options.
-    di = new JagModel();
+    di = DemoInterface::create( desc );
 
     bpo::variables_map vm;
     bpo::store( bpo::parse_command_line( argc, argv, desc ), vm );
@@ -270,10 +153,14 @@ int main( int argc, char** argv )
         winsize.push_back( 300 ); winsize.push_back( 300 );
     }
 
+    QGL::FormatOption multisampleFlag( QGL::SampleBuffers );
+    if( vm.count( "no-ms" ) > 0 )
+        multisampleFlag = QGL::NoSampleBuffers;
+
 
     QApplication app( argc, argv );
 
-    QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba | QGL::DepthBuffer | QGL::SampleBuffers );
+    QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba | QGL::DepthBuffer | multisampleFlag );
     if( version >= 3.0 )
     {
         glFormat.setVersion( int( versionMajor ), int( versionMinor ) );
@@ -284,21 +171,19 @@ int main( int argc, char** argv )
             glFormat.setProfile( QGLFormat::CoreProfile );
     }
 
-    
-
-	Ui_MainWindow ui;
-	QMainWindow* window = new QMainWindow();
-	ui.setupUi(window);
-	ui.renderwidget->show();
-	ui.pushButton->show();
-	//QObject::connect(ui.pushButton, SIGNAL(clicked()), ui.renderwidget, SLOT(dosomething()));
-	QObject::connect(ui.toggleNodeButton, SIGNAL(clicked()), ui.renderwidget, SLOT(toggleNode()));
-	window->show();
-
+    std::vector< GLWidget* > _widgetVec;
+    while( nwin-- )
+    {
+        GLWidget* w = new GLWidget( glFormat );
+        _widgetVec.push_back( w );
+        w->resize( winsize[ 0 ], winsize[ 1 ] );
+        w->show();
+    }
     if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )
         return( 1 );
-		
+
     return( app.exec() );
 
-    
+    BOOST_FOREACH( std::vector< GLWidget* >::value_type w, _widgetVec )
+        delete w;
 }
