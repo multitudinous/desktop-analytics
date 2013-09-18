@@ -1,0 +1,28 @@
+# - Config file for the Jag3D package
+# It defines the following variables
+#  jag3d_INCLUDE_DIRS - include directories for Jag3D
+#  jag3d_LIBRARIES    - libraries to link against
+#  jag3d_EXECUTABLE   - the bar executable
+
+@PACKAGE_INIT@
+
+# These are IMPORTED targets created by jag3dLibraryDepends.cmake
+set( jag3d_LIBRARIES "jagUtil;jagSG;jagDraw;jagDisk;jagBase" )
+set( jag3d_EXECUTABLE test )
+
+# Compute paths
+if( EXISTS "${PACKAGE_PREFIX_DIR}/CMakeCache.txt" )
+    # In build tree
+    include("${PACKAGE_PREFIX_DIR}/lib/jag3dBuildTreeSettings.cmake")
+    # Our library dependencies (contains definitions for IMPORTED targets)
+    include("${PACKAGE_PREFIX_DIR}/lib/jag3dLibraryDepends.cmake")
+else()
+    set_and_check( jag3d_INCLUDE_DIRS "${PACKAGE_PREFIX_DIR}/include" )
+    # The Jag3D targets file.
+    if( EXISTS "${PACKAGE_PREFIX_DIR}/lib/jag3d-targets.cmake" )
+        include("${PACKAGE_PREFIX_DIR}/lib/jag3d-targets.cmake")
+    endif()
+endif()
+
+# The location of the Usejag3d.cmake file.
+set( jag3d_USE_FILE "${PACKAGE_PREFIX_DIR}/lib/Usejag3d.cmake" )

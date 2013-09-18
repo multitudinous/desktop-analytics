@@ -1,0 +1,21 @@
+#
+# This module is provided as jag3d_USE_FILE by jag3dConfig.cmake.  It can
+# be INCLUDEd in a project to load the needed compiler and linker
+# settings to use Jag3D.
+#
+
+if( NOT jag3d_USE_FILE_INCLUDED )
+    set( jag3d_USE_FILE_INCLUDED 1 )
+
+    # Add include directories needed to use Jag3D.
+    INCLUDE_DIRECTORIES( ${jag3d_INCLUDE_DIRS} )
+
+    # Add GL3W definition, if needed.
+    if( @JAG3D_USE_GL3W@ )
+    add_definitions( -DJAG3D_USE_GL3W )
+    endif()
+
+    # Always use Boost dynamic libs.
+    add_definitions( -DBOOST_ALL_DYN_LINK )
+
+endif()
