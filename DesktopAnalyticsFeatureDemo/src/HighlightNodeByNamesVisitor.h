@@ -87,7 +87,7 @@ public:
 		if(_ignoreCase) {
 			boost::algorithm::to_lower(nodeName);
 		}
-		
+		std::string ms;
 		BOOST_FOREACH(std::string name, _nodeNames) {
 			if(_ignoreCase) {
 			boost::algorithm::to_lower(name);
@@ -96,6 +96,7 @@ public:
 			//std::cout << name << " " << nodeName << std::endl;
 			if(found!= std::string::npos && name.size()!= 0) {
 				matchedName=true;
+				ms = name;
 				//std::cout << "matched '" << name << "' to '" << nodeName <<"'" << std::endl;
 				break;
 			}

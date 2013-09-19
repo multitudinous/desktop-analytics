@@ -58,6 +58,9 @@ public:
 		
 	}
 
+	boost::mutex& getUpdateMutex() {
+		return updateMutex;
+	}
 protected:
     //no longer used
 	//gmtl::Matrix44d computeProjection( double aspect );
@@ -79,6 +82,7 @@ protected:
     PerContextMatrix44d _proj;
 	jagDraw::NodeContainer _nodes;
 	boost::thread _thread;
+	boost::mutex updateMutex;
 
 	jagDraw::NodeContainer _windowNodes, _rttNodes, _quadNodes, _pass2Nodes, _pass3Nodes;
     jagDraw::FramebufferPtr _textureFBO, _defaultFBO, _pass2FBO, _pass3FBO;

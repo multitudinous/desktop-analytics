@@ -116,6 +116,9 @@ using namespace std;
 #include "RemoveNodeNameVisitor.h"
 #include "HighlightNodeByNamesVisitor.h"
 
+#include "JagModel.h"
+
+extern JagModel* di;
 
 using namespace Poco::Data;
 
@@ -1520,9 +1523,12 @@ void WarrantyToolGP::QueryInnerJoinAndHighlightParts( const std::string& querySt
         setOfParts.push_back( partNumber );
         more = rs.moveNext();
     }
-    jagSG::HighlightNodeByNamesVisitor 
+	std::cout << "in the fixed one" << std::endl;
+	{
+		boost::mutex::scoped_lock(di->getUpdateMutex());
+		jagSG::HighlightNodeByNamesVisitor 
         highlight( m_cadRootNode, setOfParts, true, true );
-    
+	}
     if( m_currentStatement )
     {
         delete m_currentStatement;
@@ -1619,11 +1625,14 @@ void WarrantyToolGP::QueryUserDefinedAndHighlightParts( const std::string& query
         more = rs.moveNext();
     }
 	std::cout << "setofParts" << std::endl;
-	//for(int i = 0; i < setOfParts.size(); i++)
-	//	std::cout << "PART '" << setOfParts[i] << "'" << std::endl;
+	for(int i = 0; i < setOfParts.size(); i++)
+		std::cout << "PART '" << setOfParts[i] << "'" << std::endl;
+	{
+		boost::mutex::scoped_lock(di->getUpdateMutex());
+		
     jagSG::HighlightNodeByNamesVisitor 
         highlightNodes( m_cadRootNode, setOfParts, true, true, nullGlowColor );
-    
+	}
     if( m_currentStatement )
     {
         delete m_currentStatement;
@@ -1635,9 +1644,14 @@ void WarrantyToolGP::QueryUserDefinedAndHighlightParts( const std::string& query
 	std::cout << "tempNames" << std::endl;
 	//for(int i = 0; i < tempNames.size(); i++)
 	//	std::cout << "PART '" << tempNames[i] << "'" << std::endl;
-    jagSG::HighlightNodeByNamesVisitor
-        highlight( m_cadRootNode, tempNames, true, true );//,
+	{
+		boost::mutex::scoped_lock(di->getUpdateMutex());
+    //jagSG::HighlightNodeByNamesVisitor
+
+		
+    //    highlight( m_cadRootNode, tempNames, true, true );//,
         //osg::Vec3( 0.34118, 1.0, 0.57255 ) );
+	}
 }
 ////////////////////////////////////////////////////////////////////////////////
 void WarrantyToolGP::SaveCurrentQuery( const std::string& filename )

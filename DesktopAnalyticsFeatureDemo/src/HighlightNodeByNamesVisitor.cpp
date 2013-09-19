@@ -37,7 +37,7 @@
 #include <gmtl/Ray.h>
 #include <gmtl/Intersection.h>
 #include <gmtl/Vec.h>
-
+#include "ToggleByNameVisitor.h"
 
 
 using namespace gmtl;
@@ -74,7 +74,12 @@ HighlightNodeByNamesVisitor::HighlightNodeByNamesVisitor( jagSG::NodePtr node, c
 	_addGlow = addGlow;
 	_ignoreCase = ignoreCase;
 	_glowColor = glowColor;
-    node->accept( *this );
+	
+	/*for(int i = 1; i < 2; i++) {
+		std::cout << nodeNames[i] << " TOGGLED" << std::endl;
+		ToggleByNameVisitor tbn(node, nodeNames[i]);
+	}*/
+	    node->accept( *this );
 }
 HighlightNodeByNamesVisitor::HighlightNodeByNamesVisitor( const HighlightNodeByNamesVisitor& rhs )
   : Visitor( rhs )

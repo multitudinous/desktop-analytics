@@ -23,7 +23,7 @@
 //#include "DemoInterface.h"
 #include "jagmodel.h"
 #include <GL/GL3.h>
-#include <jagDraw/GL/gl3w.h>
+#include <jagDraw/gl3w.h>
 
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
@@ -507,12 +507,12 @@ bool JagModel::startup( const unsigned int numContexts )
 		pass3Commands->insert(textureSet);
 		pass3Commands->insert(uniformSet);
 
-		jagDraw::Node pass2DrawNode( commands );
-		pass2DrawNode.addDrawable(drawable);
+		jagDraw::DrawNodePtr pass2DrawNode = jagDraw::DrawNodePtr( new jagDraw::Node( commands ));
+		pass2DrawNode->addDrawable(drawable);
 		_pass2Nodes.push_back(pass2DrawNode);
 
-		jagDraw::Node pass3DrawNode( pass3Commands );
-		pass3DrawNode.addDrawable(drawable);
+		jagDraw::DrawNodePtr pass3DrawNode = jagDraw::DrawNodePtr( new jagDraw::Node( pass3Commands ));
+		pass3DrawNode->addDrawable(drawable);
 		_pass3Nodes.push_back(pass3DrawNode);
 
 
@@ -522,8 +522,8 @@ bool JagModel::startup( const unsigned int numContexts )
 		std::cout << "COMMAND TYPE "<< textureSet->getCommandTypeString(textureSet->getCommandType()) << std::endl;
 		quadCommands->insert( textureSet );
 		quadCommands->insert( uniformSet );
-		jagDraw::Node quadDrawNode( quadCommands );
-		quadDrawNode.addDrawable( drawable );
+		jagDraw::DrawNodePtr quadDrawNode = jagDraw::DrawNodePtr( new jagDraw::Node( quadCommands ));
+		quadDrawNode->addDrawable( drawable );
 		_quadNodes.push_back( quadDrawNode );
 		_quadNodes.setMaxContexts(numContexts);
 		_textureFBO->setMaxContexts(numContexts);
@@ -816,6 +816,7 @@ void JagModel::doCollection() {
 		cva.setViewport( 0, 0, 1000, 1000 );
 		cvb.setViewport(0,0,1000,1000);
 		if(this->_useFirst) {
+			boost::mutex::scoped_lock(updateMutex);
 			cva.reset();
 			cva.setViewProj( viewMatrix, tform.getProj() );
 			_root->accept(cva);
@@ -824,6 +825,7 @@ void JagModel::doCollection() {
 			_useFirst = false;
 		}
 		else{
+			boost::mutex::scoped_lock(updateMutex);
 			cvb.reset();
 			cvb.setViewProj( viewMatrix, tform.getProj() );
 			_root->accept(cvb);
