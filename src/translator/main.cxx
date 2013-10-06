@@ -49,6 +49,9 @@ std::string SetupDBLocation()
     tempPath /= "jt2ive.db";
     std::string dbPath;
     dbPath = tempPath.string();
+    
+    std::cout << "Logging db location " << dbPath << std::endl;
+
     return dbPath;
 }
 
