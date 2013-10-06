@@ -17,7 +17,7 @@
 // and passes it to PolyTrans, which will then open subwindows parented
 // to your application window. If not set, PolyTrans parents subwindows
 // to the desktop window.
-//AppWindowName c:\OSGDev\OpenSceneGraph\bin\win32\ptViewerd.exe
+//AppWindowName c:\\OSGDev\OpenSceneGraph\bin\win32\ptViewerd.exe
 // NAME CHANGE. Formerly: COMHelper_AppWindowName
 
 // osgdb_PolyTrans converts input files to a temporary file. This
@@ -30,19 +30,19 @@
 // a relative or absolute path, the folder must already exist.
 // Default if not specified: Use the source model's base file name.
 //
-//IntermediateFileNameBase testexportfilename
+IntermediateFileNameBase C:\\Users\\td10144\\Desktop\\FridayPoly\\temp_folder\\temp_import
 // NAME CHANGE. Formerly: COMHelper_BaseIntermediateFileName
 
 // Used to control the exporter that will be used for the intermediate file that is generated.
 // Set to flt for OpenFlight, obj for WaveFront, or osg/ive for OSG native.
 // Default if not specified: ive
-// IntermediateFileNameExt obj
+IntermediateFileNameExt ive
 // NAME CHANGE. Formerly: COMHelper_IntermediateFileType
 
 // If set to "Y" or "true", the intermediate file will be deleted after loading.
 // This prohibits the CachedLoad option.
 // Default if not specified: false
-DeleteIntermediateFile false
+// DeleteIntermediateFile true
 
 // If set to "Y" or "true", osgPolyTrans will attempt to load a model from
 // cache. It will do this only if the cache file exists, and the cache file
