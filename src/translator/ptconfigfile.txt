@@ -1,0 +1,79 @@
+// This file changes the default behavior of the osgdb_PolyTrans
+// OSG plugin. To force osgdb_PolyTrans to use this config file,
+// set the OSG_POLYTRANS_CONFIG_FILE to the name of this file, e.g.:
+//   set OSG_POLYTRANS_CONFIG_FILE ptconfigfile.txt
+// (for many Unix/Linux shells).
+
+// -------------------------------------------------------------------
+//
+// COM interface control
+//
+// osgdb_PolyTrans interacts with PolyTrans using a COM interface.
+// The following properties control some of these settings.
+//
+
+// Set the window name of you application. If set, osgdb_PolyTrans
+// uses this name to find the window handle of your application
+// and passes it to PolyTrans, which will then open subwindows parented
+// to your application window. If not set, PolyTrans parents subwindows
+// to the desktop window.
+//AppWindowName c:\OSGDev\OpenSceneGraph\bin\win32\ptViewerd.exe
+// NAME CHANGE. Formerly: COMHelper_AppWindowName
+
+// osgdb_PolyTrans converts input files to a temporary file. This
+// property sets the filename, without extension, that will be used for the intermediate file.
+// If a relative filename and path is provided, the absolute path will be determined using the
+// current directory.
+// If this value is not set in the config file, then the filename and path of the file being
+// imported will be used. Note that if exporting to OpenFlight, a subfolder will be inserted if
+// you check the option in the Export options dialog window to create a subfolder.  If you specify
+// a relative or absolute path, the folder must already exist.
+// Default if not specified: Use the source model's base file name.
+//
+//IntermediateFileNameBase testexportfilename
+// NAME CHANGE. Formerly: COMHelper_BaseIntermediateFileName
+
+// Used to control the exporter that will be used for the intermediate file that is generated.
+// Set to flt for OpenFlight, obj for WaveFront, or osg/ive for OSG native.
+// Default if not specified: ive
+// IntermediateFileNameExt obj
+// NAME CHANGE. Formerly: COMHelper_IntermediateFileType
+
+// If set to "Y" or "true", the intermediate file will be deleted after loading.
+// This prohibits the CachedLoad option.
+// Default if not specified: false
+DeleteIntermediateFile false
+
+// If set to "Y" or "true", osgPolyTrans will attempt to load a model from
+// cache. It will do this only if the cache file exists, and the cache file
+// date is more recent than the original file date.
+// Default if not specified: true
+CachedLoad false
+
+// Set to "Y" to display the input conversion options dialog.
+// If set to "N", PolyTrans will import your file using the last
+// options set for the input file format.
+ShowImportOptions Y
+// NAME CHANGE. Formerly: COMHelper_ShowImportOptions
+
+// Set to "Y" to display the export conversion options dialog.
+// If set to "N", PolyTrans will export your file using the last
+// options set for the intermediate file format.
+ShowExportOptions Y
+// NAME CHANGE. Formerly: COMHelper_ShowExportOptions
+
+//Use to build a list of importers that should be used for each file extension.  The name of the importer to use
+// can be obtained by running PolyTrans, hovering your mouse over the desired importer in the menu, and looking
+// at the title bar.  The title bar will say "Execute the <importer name> geometry import plug-in".  Also, if you
+// have access to the Okino COM code, the value is the plugin_descriptive_name property of the Importer object.
+// Multiple extension/plugin name pairs can be specified, deparated by commas.
+//PolyTransImporter igs IGES Files
+PolyTransPluginPreference igs IGES v5.3
+// NAME CHANGE. Formerly: PolyTransImporter
+
+// Use this option to tell the loader to NOT attempt to use PolyTrans to load the file.
+//   The plugin always rejects "osg", "osga", "ive", and "ive", as well as the extension
+//   specified in IntermediateFileNameExt. Specify additional extensions for this loader to reject
+//   separated by spaces.
+// Example: Tell the plugin to never attempt to load 3DS and ZIP files:
+//RejectExtensions 3ds zip
