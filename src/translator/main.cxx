@@ -9,8 +9,11 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #include <boost/filesystem/path.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "RemoveNodeNameVisitor.h"
 
@@ -23,6 +26,31 @@
 #include <crunchstore/SQLiteStore.h>
 
 using namespace crunchstore;
+///Setup the location of the db file
+std::string SetupDBLocation()
+{
+    boost::filesystem::path tempPath;
+    try
+    {
+        tempPath = boost::filesystem::temp_directory_path();
+    }
+    catch( boost::filesystem::filesystem_error& ec )
+    {
+        std::cout << ec.what() << std::endl;
+    }
+
+    std::string logNameStr( "jt2ive" );
+    tempPath /= logNameStr;
+    // Create subdir if needed
+    if( !boost::filesystem::exists( tempPath ) )
+    {
+        boost::filesystem::create_directory( tempPath );
+    }
+    tempPath /= "jt2ive.db";
+    std::string dbPath;
+    dbPath = tempPath.string();
+    return dbPath;
+}
 
 int main( int argc, char* argv[] )
 {
@@ -39,6 +67,35 @@ int main( int argc, char* argv[] )
     }
 
     osgDB::Registry::instance()->loadLibrary( "osgdb_PolyTrans.dll" );
+
+    
+    // Set up a datamanager to test persistence
+    DataManager manager;
+    DataAbstractionLayerPtr cache( new NullCache );
+    DataAbstractionLayerPtr buffer( new NullBuffer );
+    manager.SetCache( cache );
+    manager.SetBuffer( buffer );
+    
+    // Add an SQLite store
+    SQLiteStorePtr sqstore( new SQLiteStore );
+    sqstore->SetStorePath( SetupDBLocation() );
+    manager.AttachStore( sqstore, Store::WORKINGSTORE_ROLE );
+    
+    // Build up a persistable with some useful test types
+    Persistable q;
+    {
+        q.SetTypeName( "FileConversion" );
+        q.AddDatum( "input_file", std::string( argv[ 1 ] ) );
+        
+        const boost::posix_time::ptime now =
+            boost::posix_time::second_clock::local_time();
+        boost::posix_time::time_facet* const f =
+            new boost::posix_time::time_facet("%d-%b-%Y %H:%M:%S");
+        std::ostringstream msg;
+        msg.imbue( std::locale( msg.getloc(), f ) );
+        msg << now;
+        q.AddDatum( "start_onversion_date", msg.str() );
+    }
     
     //read in osg file
     osg::ref_ptr< osg::Node > tempCADNode = osgDB::readNodeFile( argv[ 1 ] );
@@ -72,36 +129,20 @@ int main( int argc, char* argv[] )
     {
         std::cout << "Writing file " << outPath.string() << std::endl;
     }
-    
-    // Set up a datamanager to test persistence
-    DataManager manager;
-    DataAbstractionLayerPtr cache( new NullCache );
-    DataAbstractionLayerPtr buffer( new NullBuffer );
-    manager.SetCache( cache );
-    manager.SetBuffer( buffer );
-    
-#ifndef USE_MONGODB
-    // Add an SQLite store
-    //DataAbstractionLayerPtr sqstore( new SQLiteStore );
-    //static_cast<SQLiteStore*>(sqstore.get())->SetStorePath( "/tmp/DALTest.db" );
-    SQLiteStorePtr sqstore( new SQLiteStore );
-    sqstore->SetStorePath( "/tmp/DALTest.db" );
-    manager.AttachStore( sqstore, Store::WORKINGSTORE_ROLE );
-#else
-    // Add a mongoDB store
-    DataAbstractionLayerPtr mongostore( new MongoStore );
-    static_cast<MongoStore*>(mongostore.get())->SetStorePath("localhost");
-    //manager.AttachStore( mongostore, Store::BACKINGSTORE_ROLE );
-    manager.AttachStore( mongostore, Store::WORKINGSTORE_ROLE );
-#endif
-    
+
     // Build up a persistable with some useful test types
-    Persistable q;
-    q.SetTypeName( "TestType" );
-    q.AddDatum( "Num", 1234.98735 );
-    q.AddDatum( "ABool", true );
-    q.AddDatum( "AString", std::string("This is a test") );
-    q.AddDatum( "AnInt", 19 );
+    {
+        const boost::posix_time::ptime now =
+            boost::posix_time::second_clock::local_time();
+        boost::posix_time::time_facet* const f =
+            new boost::posix_time::time_facet("%d-%b-%Y %H:%M:%S");
+        std::ostringstream msg;
+        msg.imbue( std::locale( msg.getloc(), f ) );
+        msg << now;
+        q.AddDatum( "end_onversion_date", msg.str() );
+        
+        manager.Save( q );
+    }
 
     return 0;
 }
