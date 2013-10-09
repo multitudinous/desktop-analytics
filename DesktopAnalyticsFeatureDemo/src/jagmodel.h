@@ -37,6 +37,8 @@ public:
 
 	void doCollection(); 
 
+	gmtl::Vec3d getRealTrans(gmtl::Vec2d delta);
+
 	void launchThread() {
 		_thread = boost::thread(boost::bind(&JagModel::doCollection, this));
 	}

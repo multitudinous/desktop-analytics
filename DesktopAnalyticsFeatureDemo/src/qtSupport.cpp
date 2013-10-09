@@ -190,7 +190,7 @@ void GLWidget::mousePressEvent(QMouseEvent* e) {
 
 
 void GLWidget::mouseMoveEvent(QMouseEvent* e) {
-	if( !_leftDrag && !_rightDrag )
+	if( !_leftDrag && !_rightDrag &&  !_midDrag)
         return;
 
 	int context = jagDraw::ContextSupport::instance()->getActiveContext();
@@ -227,6 +227,32 @@ void GLWidget::mouseMoveEvent(QMouseEvent* e) {
 	else if(_midDrag) 
 	{
 		//mxCore->
+		//std::cout << "should move literal" << nx << " " << ny << std::endl;
+		gmtl::Vec3d pos = mxCore->getPosition();
+		gmtl::Vec3d center = mxCore->getOrbitCenterPoint();
+		gmtl::Vec3d delta = pos - center;
+		double distance = sqrt(pow(delta[0],2)+pow(delta[1],2)+pow(delta[2],2));
+		//distance = distance/3.0;
+		
+		////std::cout << "TRANS:" << di->getRealTrans(gmtl::Vec2d(deltaX, deltaY)) << std::endl;
+		//std::cout << "DISTANCE:" << distance;
+		double ddX, ddY;
+		if(this->width() > this->height()) {
+			ddX = deltaX*((double)this->width())/((double)this->height());
+			ddY= deltaY;
+		}
+		else {
+			ddY = deltaY*((double)this->height())/((double)this->width());
+			ddX = deltaX;
+		}
+
+		double scrdelta = sqrt(ddX*ddX + ddY*ddY);
+		gmtl::Vec3d rtrans = di->getRealTrans(gmtl::Vec2d(deltaX, deltaY));
+		gmtl::normalize(rtrans);
+		//std::cout << rtrans << " RTRaNS " << std::endl;
+		//mxCore->moveLiteral(di->getRealTrans(gmtl::Vec2d(deltaX, deltaY)));
+		//mxCore->moveLiteral(gmtl::Vec3d(-deltaX*distance*0.26794919243, 0, -deltaY*distance*0.26794919243));
+		mxCore->moveLiteral(rtrans*scrdelta*distance*0.26794919243);
 	}
 
     _lastNX = nx;

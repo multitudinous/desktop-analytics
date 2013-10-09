@@ -852,3 +852,22 @@ void JagModel::doCollection() {
 
 	}
 }
+
+gmtl::Vec3d JagModel::getRealTrans(gmtl::Vec2d delta) {
+	gmtl::Matrix44d fulltform = tform.getModelViewProjInv();
+	gmtl::Vec4d a(0,0,0,1), b(delta[0],delta[1],0,1);
+	a = fulltform*a;
+	b = fulltform*b;
+	a = a/a[3];
+	b = b/b[3];
+	gmtl::Vec4d ret = a - b;
+	gmtl::Vec3d ret3;
+	ret3[0] = ret[0];
+	ret3[1] = ret[1];
+	ret3[2] =  ret[2];
+
+	return ret3;
+
+
+	
+}
