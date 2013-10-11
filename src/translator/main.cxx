@@ -100,14 +100,6 @@ int main( int argc, char* argv[] )
         q.AddDatum( "start_onversion_date", msg.str() );
     }
     
-    //read in osg file
-    osg::ref_ptr< osg::Node > tempCADNode = osgDB::readNodeFile( argv[ 1 ] );
-    if( !tempCADNode.valid() )
-    {
-        std::cout << "Invalid file loaded" << std::endl;
-        return 1;
-    }
-    
     boost::filesystem::path outPath;
     if( argc < 3 )
     {
@@ -121,6 +113,37 @@ int main( int argc, char* argv[] )
         outPath += p.filename();
         outPath.replace_extension( "ive" );
     }
+
+    boost::filesystem::path tempDirPath = outPath.parent_path() / "tempIve";
+    if( !boost::filesystem::exists( tempDirPath ) )
+    {
+        std::cout << "\nDirectory not found: "
+            << tempDirPath.string() << std::endl;
+        try
+        {
+            boost::filesystem::create_directory( tempDirPath );
+        }
+        catch( const std::exception& ex )
+        {
+            std::cout << ex.what() << std::endl;
+        }
+    }
+
+    osg::ref_ptr< osgDB::ReaderWriter::Options > osgOpt = new osgDB::ReaderWriter::Options();
+    //IntermediateFileNameBase
+    std::string osgFileOutput = "IntermediateFileNameBase " + tempDirPath.generic_string();
+    osgOpt->setOptionString( osgFileOutput );
+    //ShowImportOptions N
+    //ShowExportOptions N
+    
+    //read in osg file
+    osg::ref_ptr< osg::Node > tempCADNode = osgDB::readNodeFile( argv[ 1 ], osgOpt.get() );
+    if( !tempCADNode.valid() )
+    {
+        std::cout << "Invalid file loaded" << std::endl;
+        return 1;
+    }
+    
     //Remove crufty names from polytrans conversion
     ves::xplorer::scenegraph::util::RemoveNodeNameVisitor polyTransCleanup( tempCADNode.get(), "", "" );
 
