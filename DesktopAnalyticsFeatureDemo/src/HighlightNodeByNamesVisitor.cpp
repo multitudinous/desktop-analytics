@@ -42,18 +42,7 @@
 
 using namespace gmtl;
 
-/**
-    * Tests if the given triangle and ray intersect with each other.
-    *
-    *  @param a,b,c - the triangle vertices (ccw ordering)
-    *  @param ray - the ray
-    *  @param u,v - tangent space u/v coordinates of the intersection
-    *  @param t - an indicator of the intersection location 
-    *  @post t gives you the intersection point:
-    *         isect = ray.dir * t + ray.origin
-    *  @return true if the ray intersects the triangle.
-    *  @see from http://www.acm.org/jgt/papers/MollerTrumbore97/code.html
-    */
+
    
 
    

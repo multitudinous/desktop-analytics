@@ -226,7 +226,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent* e) {
     }
 	else if(_midDrag) 
 	{
-		//mxCore->
+		/*//mxCore->
 		//std::cout << "should move literal" << nx << " " << ny << std::endl;
 		gmtl::Vec3d pos = mxCore->getPosition();
 		gmtl::Vec3d center = mxCore->getOrbitCenterPoint();
@@ -249,10 +249,16 @@ void GLWidget::mouseMoveEvent(QMouseEvent* e) {
 		double scrdelta = sqrt(ddX*ddX + ddY*ddY);
 		gmtl::Vec3d rtrans = di->getRealTrans(gmtl::Vec2d(deltaX, deltaY));
 		gmtl::normalize(rtrans);
+
 		//std::cout << rtrans << " RTRaNS " << std::endl;
 		//mxCore->moveLiteral(di->getRealTrans(gmtl::Vec2d(deltaX, deltaY)));
 		//mxCore->moveLiteral(gmtl::Vec3d(-deltaX*distance*0.26794919243, 0, -deltaY*distance*0.26794919243));
-		mxCore->moveLiteral(rtrans*scrdelta*distance*0.26794919243);
+		mxCore->moveLiteral(rtrans*scrdelta*distance*0.26794919243);*/
+
+		gmtl::Planed panPlane( -( mxCore->getDir() ), 0. );
+        gmtl::Vec3d panDelta( jagMx::pan( mxCore.get(), panPlane, deltaX, deltaY ) );
+        mxCore->moveLiteral( -panDelta );
+
 	}
 
     _lastNX = nx;

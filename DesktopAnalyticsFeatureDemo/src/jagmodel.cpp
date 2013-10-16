@@ -546,7 +546,7 @@ bool JagModel::startup( const unsigned int numContexts )
 
 bool JagModel::init()
 {
-	glClearColor( 0.f, 0.f, 0.f, 0.f );
+	glClearColor( 1.f, 1.f, 1.f, 0.f );
 
 	glEnable( GL_DEPTH_TEST );
 
@@ -792,20 +792,18 @@ void JagModel::pickEvent(gmtl::Vec4d pos, int w, int h) {
 
 }
 
+/* This represents the initial crude implementation of a multithreaded renderer using jag. 
+ * Basically the collection visitor for  the root scene (including the correseponding draw graph) 
+ * is double buffered. The collection thread continually does collection based on updated camera info
+ * and the draw thread continually draws the most recently fully collected draw graph.
+ * The only critical section is the buffer swap.
+*/
 void JagModel::doCollection() {
-	int i;	
+	
+	jagSG::CollectionVisitor cva, cvb;;// = this->getBackCollectionVisitor();
+		
+
 	while(true) {
-
-		{
-			i=i+1;
-
-			//boost::mutex::scoped_lock(_cvSwapMutex);
-			//swapCollectionVisitor();
-		}
-		gmtl::Matrix44d viewMatrix;
-		viewMatrix = tform.getView();
-
-		jagSG::CollectionVisitor cva, cvb;;// = this->getBackCollectionVisitor();
 		jagDraw::DrawGraphPtr drawGraphTemplatea( new jagDraw::DrawGraph() );
 		jagDraw::DrawGraphPtr drawGraphTemplateb( new jagDraw::DrawGraph() );
 		drawGraphTemplatea->resize( 1 );
@@ -815,6 +813,11 @@ void JagModel::doCollection() {
 		cvb.setDrawGraphTemplate(drawGraphTemplateb);
 		cva.setViewport( 0, 0, 1000, 1000 );
 		cvb.setViewport(0,0,1000,1000);
+		
+		gmtl::Matrix44d viewMatrix;
+		viewMatrix = tform.getView();
+
+		
 		if(this->_useFirst) {
 			boost::mutex::scoped_lock(updateMutex);
 			cva.reset();
@@ -830,9 +833,9 @@ void JagModel::doCollection() {
 			cvb.setViewProj( viewMatrix, tform.getProj() );
 			_root->accept(cvb);
 			boost::mutex::scoped_lock(_cvSwapMutex);
-			//std::cout << cvb.getDrawGraph()->size() << std::endl;;
+			
 			currentDrawGraph = cvb.getDrawGraph();
-			//swapCollectionVisitor();
+			
 			_useFirst = true;
 		}
 		//return;
