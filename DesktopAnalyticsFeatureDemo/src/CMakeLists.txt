@@ -16,10 +16,12 @@ ADD_EXECUTABLE( desktopanalytics
     NaturalSortQTreeWidgetItem.cxx
     QueryResults.cxx
     RemoveNodeNameVisitor.cpp
+    AbufferCollectionVisitor.cpp
     csvparser.cpp
     ToggleByNameVisitor.h
     HighlightNodeByNamesVisitor.h
     RemoveNodeNameVisitor.h
+    AbufferCollectionVisitor.h
     WarrantyToolGP.h
 	DemoInterface.h
 	qtGlWidget.h

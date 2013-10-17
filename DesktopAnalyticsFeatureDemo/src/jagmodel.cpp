@@ -429,7 +429,7 @@ bool JagModel::startup( const unsigned int numContexts )
 			"out vec4 colorOut; \n"
 			"void main() { \n"
 			"vec4 glow = texture2D(texture2, tcOut);\n" 
-			"    colorOut = texture2D(texture, tcOut)*(1.0-glow[3]) + glow;// + .5*texture2D( texture2, tcOut ); \n"
+			"    colorOut = glow;//texture2D(texture, tcOut)*(1.0-glow[3]) + glow;// + .5*texture2D( texture2, tcOut ); \n"
 			//"    colorOut = texture2D( texture, tcOut )+texture2D(texture2, tcOut);// + vec4( .5, 0., 0., 0. ); \n"
 			//"    colorOut = vec4( tcOut, 0., 1. ); \n"
 			"}";
@@ -653,7 +653,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj)
 		glFlush();
 		//glDisable(GL_DEPTH_TEST);
 		_pass2Nodes.execute(drawInfo);
-		_pass3Nodes.execute(drawInfo);
+		//_pass3Nodes.execute(drawInfo);
 		_quadNodes.execute(drawInfo);
 	}
 
