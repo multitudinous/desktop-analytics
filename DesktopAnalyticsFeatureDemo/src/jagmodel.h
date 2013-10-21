@@ -4,6 +4,12 @@
 #include <jagDraw/Common.h>
 #include "WarrantyToolGP.h"
 
+
+#include <jagUtil/ABuffer.h>
+#include <jagDisk/ReadWrite.h>
+#include <jagBase/Profile.h>
+#include <jagUtil/DrawGraphCountVisitor.h>
+
 class JagModel : public DemoInterface
 {
 public:
@@ -92,4 +98,11 @@ protected:
 	bool _first;
 	warrantytool::WarrantyToolGP * wt;
      GLsizei _texWidth, _texHeight;
+
+
+	 jagUtil::ABufferPtr _aBuffer;
+
+    jagDraw::FramebufferPtr _opaqueFBO;
+    jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _depthBuffer;
+
 };

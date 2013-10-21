@@ -18,12 +18,12 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#define JAG3D_USE_GL3W
+//#define JAG3D_USE_GL3W
 
 //#include "DemoInterface.h"
 #include "jagmodel.h"
-#include <GL/GL3.h>
-#include <jagDraw/gl3w.h>
+#include <jagDraw/PlatformOpenGL.h>
+//#include <jagDraw/gl3w.h>
 
 #include <jagDraw/Common.h>
 #include <jagDraw/PerContextData.h>
@@ -305,6 +305,7 @@ bool JagModel::startup( const unsigned int numContexts )
 		_pass2FBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer(GL_DRAW_FRAMEBUFFER ) ); 
 		_pass2FBO->setViewport( 0, 0, _texWidth, _texHeight );
 		_pass2FBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		
 		_pass2FBO->addAttachment( GL_COLOR_ATTACHMENT0, tex3 );
 
 		_pass3FBO = jagDraw::FramebufferPtr( new jagDraw::Framebuffer(GL_DRAW_FRAMEBUFFER ) ); 
@@ -429,7 +430,7 @@ bool JagModel::startup( const unsigned int numContexts )
 			"out vec4 colorOut; \n"
 			"void main() { \n"
 			"vec4 glow = texture2D(texture2, tcOut);\n" 
-			"    colorOut = glow;//texture2D(texture, tcOut)*(1.0-glow[3]) + glow;// + .5*texture2D( texture2, tcOut ); \n"
+			"    colorOut = texture2D(texture, tcOut);//*(1.0-glow[3]) + glow;// + .5*texture2D( texture2, tcOut ); \n"
 			//"    colorOut = texture2D( texture, tcOut )+texture2D(texture2, tcOut);// + vec4( .5, 0., 0., 0. ); \n"
 			//"    colorOut = vec4( tcOut, 0., 1. ); \n"
 			"}";

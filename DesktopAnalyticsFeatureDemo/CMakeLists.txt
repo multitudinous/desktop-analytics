@@ -134,7 +134,7 @@ include( CMakeMacros )
 
 
 add_subdirectory( src )
-add_subdirectory( perf-tests )
+#add_subdirectory( perf-tests )
 #add_subdirectory( perftests )
 #add_subdirectory( tritest )
 
