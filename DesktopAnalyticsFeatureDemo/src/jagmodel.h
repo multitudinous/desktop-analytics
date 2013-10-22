@@ -11,101 +11,47 @@
 #include <jagBase/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
 #include <jagSG/CollectionVisitor.h>
+
+#pragma once
+
 class JagModel : public DemoInterface
 {
 public:
     JagModel()
-      : DemoInterface( "jag.ex.jagmodel" ),
-        _fileName( "memphis_accum.ive" ),
-		_imageName( "tex.png" )
-		
-    {
-		_texWidth = 1000;
-		_texHeight = 1000;
-		currentAngle=0.0;
-		setContinuousRedraw();
-		_first = true;
-	}
+      : DemoInterface( "jag.ex.abuf" ),
+        _fileName( "cow.osg" ),
+        _moveRate( 1. ),
+        _width( 1600 ),
+        _height( 1200 )
+    {}
     virtual ~JagModel() {}
 
     virtual bool parseOptions( boost::program_options::variables_map& vm );
 
     virtual bool startup( const unsigned int numContexts );
     virtual bool init();
-    virtual bool frame( const gmtl::Matrix44d& view=gmtl::MAT_IDENTITY44D, const gmtl::Matrix44d& proj=gmtl::MAT_IDENTITY44D );
+    virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
     virtual void reshape( const int w, const int h );
-    virtual bool shutdown()
+    virtual bool keyCommand( const int command );
+
+    // Return a value to bontrol base gamepad move rate in the scene.
+    virtual double getMoveRate() const
     {
-        return( true );
+        return( _moveRate );
     }
-	virtual void incrementAngle(double inc) {
-		currentAngle+=inc;
-	}
 
-	void doCollection(); 
-
-	gmtl::Vec3d getRealTrans(gmtl::Vec2d delta);
-
-	void launchThread() {
-		_thread = boost::thread(boost::bind(&JagModel::doCollection, this));
-	}
-
-	virtual void toggleSecondNodeMask() {
-		//secondNode->setNodeMask(!(secondNode->getNodeMask()));
-	}
-	virtual void toggleNodeByName(std::string name) {
-		_first = true;
-		jagSG::ToggleByNameVisitor tbnv(_root, name);
-		std::cout << " GOT THIS FAR " << std::endl;
-		//_root->setMaxContexts(1);
-		//std::cout << "SET MAX CONTEXTS" << std::endl;
-	}
-	
-	//virtual void performRayIntersection(gmtl::Ray<double> currentRay);
-	void JagModel::pickEvent(gmtl::Vec4d pos, int w, int h);
-	void doSomething() {
-		
-	}
-
-	boost::mutex& getUpdateMutex() {
-		return updateMutex;
-	}
 protected:
-    //no longer used
-	//gmtl::Matrix44d computeProjection( double aspect );
-   
-	//these are no longer used
-	//gmtl::Matrix44d computeView();
-	//gmtl::Matrix44d computeView( const double angleRad );
-	gmtl::Matrix44d lastProj;
-	double currentAngle;
-    std::string _fileName, _imageName;
+    std::string _fileName;
 
     jagSG::NodePtr _root;
-	jagSG::NodePtr _pass1, _pass2, _pass3;
-	
-	typedef jagDraw::PerContextData< double > PerContextAspect;
-    PerContextAspect _aspect;
-	jagBase::TransformD tform;
-    typedef jagDraw::PerContextData< gmtl::Matrix44d > PerContextMatrix44d;
-    PerContextMatrix44d _proj;
-	jagDraw::NodeContainer _nodes;
-	boost::thread _thread;
-	boost::mutex updateMutex;
 
-	jagDraw::NodeContainer _windowNodes, _rttNodes, _quadNodes, _pass2Nodes, _pass3Nodes;
-    jagDraw::FramebufferPtr _textureFBO, _defaultFBO, _pass2FBO, _pass3FBO;
-	jagDraw::DrawGraphPtr currentDrawGraph;
-	jagSG::CollectionVisitorPtr currentCv;
-	bool _first;
-	warrantytool::WarrantyToolGP * wt;
-     GLsizei _texWidth, _texHeight;
-	 int _width, _height;
+    double _moveRate;
 
+    jagUtil::ABufferPtr _aBuffer;
 
-	 jagUtil::ABufferPtr _aBuffer;
-	 jagUtil::BlurPtr _blur;
     jagDraw::FramebufferPtr _opaqueFBO;
-    jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _depthBuffer, _glowBuffer;
+    jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
+    jagUtil::BlurPtr _blur;
 
+    int _width, _height;
 };

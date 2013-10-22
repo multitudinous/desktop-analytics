@@ -55,7 +55,7 @@ Ui_MainWindow ui;
 JagModel* di( NULL );
 
 void doCollection() {
-	di->doCollection();
+//	di->doCollection();
 	
 }
 
@@ -112,7 +112,7 @@ void GLWidget::paintGL()
     jagDraw::jagDrawContextID contextID = cs->getJagContextID( pCtxId );
 
     cs->setActiveContext( contextID );
-    di->frame();
+    di->frame(gmtl::MAT_IDENTITY44D,gmtl::MAT_IDENTITY44D);
 
 #ifdef JAG3D_ENABLE_PROFILING
     jagBase::ProfileManager::instance()->dumpAll();
@@ -131,7 +131,7 @@ void GLWidget::resizeGL( int w, int h )
 
 void GLWidget::toggleNode() {
 	//di->toggleSecondNodeMask();
-	di->toggleNodeByName(ui.lineEdit->text().toLatin1().constData());
+//	di->toggleNodeByName(ui.lineEdit->text().toLatin1().constData());
 	updateGL();
 }
 
@@ -278,7 +278,7 @@ void GLWidget::rayEvent(float x, float y) {
 	std::cout << ndcPos << " ndcPos" << std::endl;
 
 
-	di->pickEvent(ndcPos, width(), height());
+//	di->pickEvent(ndcPos, width(), height());
 
 }
 

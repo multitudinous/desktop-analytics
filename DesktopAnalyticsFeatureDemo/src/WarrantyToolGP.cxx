@@ -1525,7 +1525,7 @@ void WarrantyToolGP::QueryInnerJoinAndHighlightParts( const std::string& querySt
     }
 	std::cout << "in the fixed one" << std::endl;
 	{
-		boost::mutex::scoped_lock(di->getUpdateMutex());
+//		boost::mutex::scoped_lock(di->getUpdateMutex());
 		jagSG::HighlightNodeByNamesVisitor 
         highlight( m_cadRootNode, setOfParts, true, true );
 	}
@@ -1628,7 +1628,8 @@ void WarrantyToolGP::QueryUserDefinedAndHighlightParts( const std::string& query
 	for(int i = 0; i < setOfParts.size(); i++)
 		std::cout << "PART '" << setOfParts[i] << "'" << std::endl;
 	{
-		boost::mutex::scoped_lock(di->getUpdateMutex());
+		//commented out temp
+//		boost::mutex::scoped_lock(di->getUpdateMutex());
 		
     jagSG::HighlightNodeByNamesVisitor 
         highlightNodes( m_cadRootNode, setOfParts, true, true, nullGlowColor );
@@ -1645,7 +1646,12 @@ void WarrantyToolGP::QueryUserDefinedAndHighlightParts( const std::string& query
 	//for(int i = 0; i < tempNames.size(); i++)
 	//	std::cout << "PART '" << tempNames[i] << "'" << std::endl;
 	{
-		boost::mutex::scoped_lock(di->getUpdateMutex());
+
+	//commented out temp
+	//	boost::mutex::scoped_lock(di->getUpdateMutex());
+
+
+
     //jagSG::HighlightNodeByNamesVisitor
 
 		
@@ -1945,3 +1951,5 @@ void WarrantyToolGP::ValidateDataFile()
 	*/
 }
 ////////////////////////////////////////////////////////////////////////////////
+
+

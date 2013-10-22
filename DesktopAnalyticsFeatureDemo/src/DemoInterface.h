@@ -37,9 +37,6 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/foreach.hpp>
 #include <boost/any.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/thread.hpp>
-
 
 
 /** \class DemoInterface DemoInterface.h DemoInterface.h
@@ -85,7 +82,10 @@ public:
     /** Called on window resize. */
     virtual void reshape( const int w, const int h ) {}
     /** Called prior to exit. */
-    virtual bool shutdown() = 0;
+    virtual bool shutdown() { return( true ); }
+
+    /** Simple interface for passing key press events. Return true to redraw. */
+    virtual bool keyCommand( const int command ) { return( false ); }
 
     jagDraw::DrawInfo& getDrawInfo( const jagDraw::jagDrawContextID contextID )
     {
@@ -93,10 +93,7 @@ public:
     }
     jagSG::CollectionVisitor& getCollectionVisitor()
     {
-       // if(_useFirst)
-			return _collectionVisitor[1];
-		//else
-		//	return _collectionVisitor[0];
+        return( _collectionVisitor );
     }
 
     jagMx::MxCorePtr getMxCore( const jagDraw::jagDrawContextID contextID )
@@ -107,18 +104,8 @@ public:
             return( _mxCore._data[ contextID ] );
     }
 
-	void swapCollectionVisitor() {
-		//boost::mutex::scoped_lock(_cvSwapMutex);
-		_useFirst = !_useFirst;
-		
-	}
-
-	jagSG::CollectionVisitor& getBackCollectionVisitor() {
-		if(_useFirst)
-			return _collectionVisitor[0];
-		else
-			return _collectionVisitor[1];
-	}
+    // Return a value to bontrol base gamepad move rate in the scene.
+    virtual double getMoveRate() const { return( 1. ); }
 
 protected:
     std::string _logName;
@@ -126,20 +113,17 @@ protected:
 
     bool _continuousRedraw;
 
-	boost::mutex _cvSwapMutex;
-
     jagDraw::PerContextDrawInfo _drawInfo;
-    jagSG::CollectionVisitor _collectionVisitor[2];
-	bool _useFirst;
+    jagSG::CollectionVisitor _collectionVisitor;
 
     typedef jagDraw::PerContextData< jagMx::MxCorePtr > PerContextMxCore;
     PerContextMxCore _mxCore;
 
 
 
-#define __READ_UTIL( _RESULT, _TYPE, _NAME ) \
+#define __READ_UTIL( _RESULT, _TYPE, _NAME, _OPT ) \
     { \
-        boost::any anyTemp( jagDisk::read( _NAME ) ); \
+        boost::any anyTemp( jagDisk::read( _NAME, _OPT ) ); \
         try { \
             _RESULT = boost::any_cast< _TYPE >( anyTemp ); \
         } \
@@ -149,26 +133,26 @@ protected:
         } \
         if( _RESULT == NULL ) \
         { \
-            JAG3D_FATAL_STATIC( _logName, "Can't load \"" + _NAME + "\"." ); \
+            JAG3D_FATAL_STATIC( _logName, std::string("Can't load \"") + std::string(_NAME) + std::string("\".") ); \
         } \
     }
 
-    jagSG::NodePtr readSceneGraphNodeUtil( const std::string& fileName )
+    jagSG::NodePtr readSceneGraphNodeUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
     {
         jagSG::NodePtr result;
-        __READ_UTIL( result, jagSG::NodePtr, fileName );
+        __READ_UTIL( result, jagSG::NodePtr, fileName, options );
         return( result );
     }
-    jagDraw::ImagePtr readImageUtil( const std::string& fileName )
+    jagDraw::ImagePtr readImageUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
     {
         jagDraw::ImagePtr result;
-        __READ_UTIL( result, jagDraw::ImagePtr, fileName );
+        __READ_UTIL( result, jagDraw::ImagePtr, fileName, options );
         return( result );
     }
-    jagDraw::ShaderPtr readShaderUtil( const std::string& fileName )
+    jagDraw::ShaderPtr readShaderUtil( const std::string& fileName, const jagDisk::Options* options=NULL )
     {
         jagDraw::ShaderPtr result;
-        __READ_UTIL( result, jagDraw::ShaderPtr, fileName );
+        __READ_UTIL( result, jagDraw::ShaderPtr, fileName, options );
         return( result );
     }
 };
