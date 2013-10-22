@@ -6,10 +6,11 @@
 
 
 #include <jagUtil/ABuffer.h>
+#include <jagUtil/Blur.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
 #include <jagUtil/DrawGraphCountVisitor.h>
-
+#include <jagSG/CollectionVisitor.h>
 class JagModel : public DemoInterface
 {
 public:
@@ -95,14 +96,16 @@ protected:
 	jagDraw::NodeContainer _windowNodes, _rttNodes, _quadNodes, _pass2Nodes, _pass3Nodes;
     jagDraw::FramebufferPtr _textureFBO, _defaultFBO, _pass2FBO, _pass3FBO;
 	jagDraw::DrawGraphPtr currentDrawGraph;
+	jagSG::CollectionVisitorPtr currentCv;
 	bool _first;
 	warrantytool::WarrantyToolGP * wt;
      GLsizei _texWidth, _texHeight;
+	 int _width, _height;
 
 
 	 jagUtil::ABufferPtr _aBuffer;
-
+	 jagUtil::BlurPtr _blur;
     jagDraw::FramebufferPtr _opaqueFBO;
-    jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _depthBuffer;
+    jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _depthBuffer, _glowBuffer;
 
 };
