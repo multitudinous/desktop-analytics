@@ -254,6 +254,7 @@ bool JagModel::startup( const unsigned int numContexts )
     // per context. Initialize the MxCore objects and create default views.
     const jagDraw::BoundPtr bound( _root->getBound() );
     const gmtl::Point3d pos( bound->getCenter() + gmtl::Vec3d( 0., -1., 0. ) );
+	std::cout << "about to set up mxcore with " << numContexts << std::endl;
     for( unsigned int idx( 0 ); idx<numContexts; ++idx )
     {
         jagMx::MxCorePtr mxCore( new jagMx::MxCore() );
@@ -396,8 +397,12 @@ void JagModel::reshape( const int w, const int h )
 
 
     // Set aspect for all matrix control objects.
+	std::cout << "got here " << std::endl;
     const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+	std::cout << "got here " << contextID << std::endl;
+	std::cout << "mx core size:" << _mxCore._data.size() << std::endl;
     _mxCore._data[ contextID ]->setAspect( ( double ) w / ( double ) h );
+	std::cout << "got here 3" << std::endl;
 }
 
 

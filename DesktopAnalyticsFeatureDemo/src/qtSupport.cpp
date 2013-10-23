@@ -69,7 +69,7 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 }
 
 QGLFormat getFormat() {
-	QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba | QGL::DepthBuffer | QGL::SampleBuffers );
+	QGLFormat glFormat( QGL::DoubleBuffer | QGL::Rgba | QGL::DepthBuffer | QGL::NoSampleBuffers );
 	double version = 4.0;
 	double versionMajor;
     modf( version, &versionMajor );
@@ -349,19 +349,26 @@ int main( int argc, char** argv )
     
 
 	
+	
+
+   
+
 	QMainWindow* window = new QMainWindow();
 	ui.setupUi(window);
+	ui.renderwidget->resize(1000,1000);
+	 if( !( di->startup( 1 ) ) )
+        return( 1 );
 	ui.renderwidget->show();
 	ui.pushButton->show();
 	//QObject::connect(ui.pushButton, SIGNAL(clicked()), ui.renderwidget, SLOT(dosomething()));
 	QObject::connect(ui.toggleNodeButton, SIGNAL(clicked()), ui.renderwidget, SLOT(toggleNode()));
+	
 	window->show();
 
 	WarrantyToolPlugin_UIDialog* wtpuid = new WarrantyToolPlugin_UIDialog();
 	wtpuid->show();
 
-    if( !( di->startup( jagDraw::ContextSupport::instance()->getNumRegisteredContexts() ) ) )
-        return( 1 );
+
 	boost::thread t(doCollection);
 		
     return( app.exec() );
