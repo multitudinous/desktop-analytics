@@ -148,7 +148,7 @@ bool JagModel::startup( const unsigned int numContexts )
     jagSG::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
     if( model == NULL )
         return( false );
-	jagSG::NodePtr model2( DemoInterface::readSceneGraphNodeUtil( "3h.ive" ) );
+	//jagSG::NodePtr model2( DemoInterface::readSceneGraphNodeUtil( "3h.ive" ) );
     // Add model instance as opaque
     _root.reset( new jagSG::Node );
     _root->addChild( model );
@@ -156,8 +156,22 @@ bool JagModel::startup( const unsigned int numContexts )
     // Add translated model instance for ABuffer transparency
     jagSG::NodePtr xformNode( jagSG::NodePtr( new jagSG::Node() ) );
     gmtl::setTrans( xformNode->getTransform(), gmtl::Vec3d( 0., model->getBound()->getRadius() * -1.5, 0. ) );
+
+		jagSG::NodePtr model1= DemoInterface::readSceneGraphNodeUtil( "1h.ive" );
+	jagSG::NodePtr model2= DemoInterface::readSceneGraphNodeUtil( "2hp1.ive" );
+	jagSG::NodePtr model3= DemoInterface::readSceneGraphNodeUtil( "2hp2a.ive" );
+	jagSG::NodePtr model4= DemoInterface::readSceneGraphNodeUtil( "2hp2b.ive" );
+	jagSG::NodePtr model5= DemoInterface::readSceneGraphNodeUtil( "3h.ive" );
+	jagSG::NodePtr cow= DemoInterface::readSceneGraphNodeUtil( "cow.osg" );
+	
+
+
     _root->addChild( xformNode );
-    xformNode->addChild( model2 );
+	 xformNode->addChild( model1 );
+	  xformNode->addChild( model2 );
+	  xformNode->addChild( model3 );
+	   xformNode->addChild( model4 );
+    xformNode->addChild( model5 );
 	_aBuffer->setTransparencyEnable( *xformNode );
 
 
