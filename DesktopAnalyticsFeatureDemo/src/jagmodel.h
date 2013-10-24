@@ -3,7 +3,7 @@
 #include "ToggleByNameVisitor.h"
 #include <jagDraw/Common.h>
 #include "WarrantyToolGP.h"
-
+#include <jagBase\Transform.h>
 
 #include <jagUtil/ABuffer.h>
 #include <jagUtil/Blur.h>
@@ -22,7 +22,8 @@ public:
         _fileName( "cow.osg" ),
         _moveRate( 1. ),
         _width( 1600 ),
-        _height( 1200 )
+        _height( 1200 ),
+		_firstFrame(true)
     {}
     virtual ~JagModel() {}
 
@@ -40,9 +41,14 @@ public:
         return( _moveRate );
     }
 
+	/* Launch double buffered threaded collection
+	*/
+	void doThreadedCollection();
+
 protected:
     std::string _fileName;
-
+	bool _useFirst;
+	jagBase::TransformD tform;
     jagSG::NodePtr _root;
 
     double _moveRate;
@@ -52,6 +58,11 @@ protected:
     jagDraw::FramebufferPtr _opaqueFBO;
     jagDraw::TexturePtr _opaqueBuffer, _secondaryBuffer, _glowBuffer, _depthBuffer;
     jagUtil::BlurPtr _blur;
+
+	//double buffered collection visitors
+	jagSG::CollectionVisitor cva, cvb, currentCV;
+	boost::mutex _updateMutex;
+	bool _firstFrame;
 
     int _width, _height;
 };

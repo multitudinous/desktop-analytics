@@ -310,7 +310,8 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     jagMx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
     jagSG::CollectionVisitor& collect( getCollectionVisitor() );
-    collect.reset();
+	if(_firstFrame)
+	    collect.reset();
 
     gmtl::Matrix44d viewMatrix;
     {
@@ -323,7 +324,8 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
         {
             JAG3D_PROFILE( "Collection traverse" );
             // Collect a draw graph.
-            _root->accept( collect );
+			if(_firstFrame)
+	            _root->accept( collect );
         }
 #ifdef ENABLE_SORT
         {
@@ -365,7 +367,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     glFlush();
 
     JAG3D_ERROR_CHECK( "jagmodel display()" );
-
+	_firstFrame = false;
     return( true );
 }
 
@@ -436,4 +438,63 @@ bool JagModel::keyCommand( const int command )
     }
 
     return( true ); // cause redraw.
+}
+
+void JagModel::doThreadedCollection() {
+		jagSG::CollectionVisitor cva, cvb;;// = this->getBackCollectionVisitor();
+		
+
+	while(true) {
+		jagDraw::DrawGraphPtr drawGraphTemplatea( new jagDraw::DrawGraph() );
+		jagDraw::DrawGraphPtr drawGraphTemplateb( new jagDraw::DrawGraph() );
+		drawGraphTemplatea->resize( 1 );
+		drawGraphTemplateb->resize( 1 );
+		//getCollectionVisitor().setDrawGraphTemplate( drawGraphTemplate );
+		cva.setDrawGraphTemplate(drawGraphTemplatea);
+		cvb.setDrawGraphTemplate(drawGraphTemplateb);
+		cva.setViewport( 0, 0, 1000, 1000 );
+		cvb.setViewport(0,0,1000,1000);
+		currentCV.setViewport(0,0,1000,1000);
+		gmtl::Matrix44d viewMatrix;
+		viewMatrix = tform.getView();
+
+		
+		if(this->_useFirst) {
+			boost::mutex::scoped_lock(this->_updateMutex);
+			cva.reset();
+			cva.setViewProj( viewMatrix, tform.getProj() );
+			_root->accept(cva);
+			boost::mutex::scoped_lock(_cvSwapMutex);
+			currentCV.setDrawGraphTemplate(cva.getDrawGraph());
+			//currentDrawGraph = cva.getDrawGraph();
+			_useFirst = false;
+		}
+		else{
+			boost::mutex::scoped_lock(updateMutex);
+			cvb.reset();
+			cvb.setViewProj( viewMatrix, tform.getProj() );
+			_root->accept(cvb);
+			boost::mutex::scoped_lock(_cvSwapMutex);
+			currentCV.setDrawGraphTemplate(cvb.getDrawGraph());
+			
+			//currentDrawGraph = cvb.getDrawGraph();
+			
+			_useFirst = true;
+		}
+		//return;
+		/*cv.reset();
+		gmtl::Matrix44d viewMatrix;
+
+
+		{
+		//JAG3D_PROFILE( "Collection traverse" );
+		// Collect a draw graph.
+
+		//_root->accept( cv );
+		}
+
+		//std::cout << "DOING COLLECTION" << std::endl;
+		*/
+
+	}
 }
