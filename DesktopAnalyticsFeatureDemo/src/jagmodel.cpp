@@ -148,7 +148,7 @@ bool JagModel::startup( const unsigned int numContexts )
     jagSG::NodePtr model( DemoInterface::readSceneGraphNodeUtil( _fileName ) );
     if( model == NULL )
         return( false );
-
+	jagSG::NodePtr model2( DemoInterface::readSceneGraphNodeUtil( "3h.ive" ) );
     // Add model instance as opaque
     _root.reset( new jagSG::Node );
     _root->addChild( model );
@@ -157,8 +157,8 @@ bool JagModel::startup( const unsigned int numContexts )
     jagSG::NodePtr xformNode( jagSG::NodePtr( new jagSG::Node() ) );
     gmtl::setTrans( xformNode->getTransform(), gmtl::Vec3d( 0., model->getBound()->getRadius() * -1.5, 0. ) );
     _root->addChild( xformNode );
-    xformNode->addChild( model );
-    _aBuffer->setTransparencyEnable( *xformNode );
+    xformNode->addChild( model2 );
+	_aBuffer->setTransparencyEnable( *xformNode );
 
 
     // For gamepad speed control
@@ -172,7 +172,7 @@ bool JagModel::startup( const unsigned int numContexts )
     _root->accept( sfdv );
 
     // Optimize VAO and element buffers.
-    jagUtil::BufferAggregationVisitor bav( _root );
+    //jagUtil::BufferAggregationVisitor bav( _root );
 
 
     // The scene graph will have two CommandMaps, one for opaque
