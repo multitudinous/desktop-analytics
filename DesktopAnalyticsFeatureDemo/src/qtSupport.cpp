@@ -55,7 +55,7 @@ Ui_MainWindow ui;
 JagModel* di( NULL );
 
 void doCollection() {
-//	di->doCollection();
+	di->doThreadedCollection();
 	
 }
 

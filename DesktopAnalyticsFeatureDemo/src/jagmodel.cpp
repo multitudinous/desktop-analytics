@@ -342,18 +342,54 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     {
         JAG3D_PROFILE( "Render" );
 
-        // Execute the draw graph.
-        jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+		if(_firstFrame) {
+			// Execute the draw graph.
+			jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
 
-        // Set view and projection to use for drawing. Create projection using
-        // the computed near and far planes.
-        double minNear, maxFar;
-        collect.getNearFar( minNear, maxFar );
-        drawGraph->setViewProj( viewMatrix, mxCore->computeProjection( minNear, maxFar ) );
+			// Set view and projection to use for drawing. Create projection using
+			// the computed near and far planes.
+			double minNear, maxFar;
+			collect.getNearFar( minNear, maxFar );
+			drawGraph->setViewProj( viewMatrix, mxCore->computeProjection( minNear, maxFar ) );
 
-        // The ABuffer object handles rendering.
-        // This line replaces drawGraph->execute( drawInfo );
-        _aBuffer->renderFrame( collect, drawInfo );
+			// The ABuffer object handles rendering.
+			// This line replaces drawGraph->execute( drawInfo );
+			_aBuffer->renderFrame( collect, drawInfo );
+		}
+		else {
+			if(_useFirst) {
+			boost::mutex::scoped_lock(this->_fm);
+			// Execute the draw graph.
+			collect.setDrawGraphTemplate(cva.getDrawGraph());
+			jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+
+			// Set view and projection to use for drawing. Create projection using
+			// the computed near and far planes.
+			double minNear, maxFar;
+			collect.getNearFar( minNear, maxFar );
+			drawGraph->setViewProj( viewMatrix, mxCore->computeProjection( minNear, maxFar ) );
+
+			// The ABuffer object handles rendering.
+			// This line replaces drawGraph->execute( drawInfo );
+			_aBuffer->renderFrame( collect, drawInfo );
+			}
+			else {
+			boost::mutex::scoped_lock(this->_sm);
+			// Execute the draw graph.
+			collect.setDrawGraphTemplate(cvb.getDrawGraph());
+			jagDraw::DrawGraphPtr drawGraph( collect.getDrawGraph() );
+
+			// Set view and projection to use for drawing. Create projection using
+			// the computed near and far planes.
+			double minNear, maxFar;
+			collect.getNearFar( minNear, maxFar );
+			drawGraph->setViewProj( viewMatrix, mxCore->computeProjection( minNear, maxFar ) );
+
+			// The ABuffer object handles rendering.
+			// This line replaces drawGraph->execute( drawInfo );
+			_aBuffer->renderFrame( collect, drawInfo );
+			}
+		}
     }
 #ifdef JAG3D_ENABLE_PROFILING
     {
@@ -367,7 +403,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     glFlush();
 
     JAG3D_ERROR_CHECK( "jagmodel display()" );
-	_firstFrame = false;
+	//_firstFrame = false;
     return( true );
 }
 
@@ -460,26 +496,27 @@ void JagModel::doThreadedCollection() {
 
 		
 		if(this->_useFirst) {
-			boost::mutex::scoped_lock(this->_updateMutex);
+			boost::mutex::scoped_lock(this->_fm);
 			cva.reset();
 			cva.setViewProj( viewMatrix, tform.getProj() );
 			_root->accept(cva);
-			boost::mutex::scoped_lock(_cvSwapMutex);
+			
 			currentCV.setDrawGraphTemplate(cva.getDrawGraph());
 			//currentDrawGraph = cva.getDrawGraph();
 			_useFirst = false;
+			_firstFrame = false;
 		}
 		else{
-			boost::mutex::scoped_lock(updateMutex);
+			boost::mutex::scoped_lock(this->_sm);
 			cvb.reset();
 			cvb.setViewProj( viewMatrix, tform.getProj() );
 			_root->accept(cvb);
-			boost::mutex::scoped_lock(_cvSwapMutex);
+			
 			currentCV.setDrawGraphTemplate(cvb.getDrawGraph());
 			
 			//currentDrawGraph = cvb.getDrawGraph();
 			
-			_useFirst = true;
+			_useFirst = false;
 		}
 		//return;
 		/*cv.reset();

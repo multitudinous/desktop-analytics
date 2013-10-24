@@ -61,7 +61,7 @@ protected:
 
 	//double buffered collection visitors
 	jagSG::CollectionVisitor cva, cvb, currentCV;
-	boost::mutex _updateMutex;
+	boost::mutex _updateMutex, _fm, _sm;
 	bool _firstFrame;
 
     int _width, _height;
