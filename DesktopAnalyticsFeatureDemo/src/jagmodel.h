@@ -34,6 +34,15 @@ public:
     virtual bool frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj );
     virtual void reshape( const int w, const int h );
     virtual bool keyCommand( const int command );
+	virtual void setABufferParams() {
+		_aBuffer->setMaxFragments(150);
+		_aBuffer->setFragmentAlpha(.05);
+	
+	}
+	boost::mutex& getUpdateMutex()
+	{
+		return _updateMutex;
+	}
 
     // Return a value to bontrol base gamepad move rate in the scene.
     virtual double getMoveRate() const

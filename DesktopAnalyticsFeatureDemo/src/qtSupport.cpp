@@ -132,6 +132,7 @@ void GLWidget::resizeGL( int w, int h )
 void GLWidget::toggleNode() {
 	//di->toggleSecondNodeMask();
 //	di->toggleNodeByName(ui.lineEdit->text().toLatin1().constData());
+	di->setABufferParams();
 	updateGL();
 }
 
@@ -145,6 +146,8 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
         delete di;
         QCoreApplication::instance()->quit();
         break;
+	case 'a':
+		di->setABufferParams();
 
     default:
         QGLWidget::keyPressEvent( e );

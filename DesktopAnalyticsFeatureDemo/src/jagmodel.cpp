@@ -122,6 +122,7 @@ bool JagModel::startup( const unsigned int numContexts )
     _depthBuffer->setMaxContexts( numContexts );
 
     // Create the ABuffer management object.
+	
     _aBuffer.reset( new jagUtil::ABuffer( _depthBuffer, _opaqueBuffer, _glowBuffer ) );
     _aBuffer->setMaxContexts( numContexts );
 
@@ -152,7 +153,7 @@ bool JagModel::startup( const unsigned int numContexts )
     // Add model instance as opaque
     _root.reset( new jagSG::Node );
     _root->addChild( model );
-
+	gmtl::setScale(model->getTransform(), .01);
     // Add translated model instance for ABuffer transparency
     jagSG::NodePtr xformNode( jagSG::NodePtr( new jagSG::Node() ) );
     gmtl::setTrans( xformNode->getTransform(), gmtl::Vec3d( 0., model->getBound()->getRadius() * -1.5, 0. ) );
@@ -173,7 +174,8 @@ bool JagModel::startup( const unsigned int numContexts )
 	   xformNode->addChild( model4 );
     xformNode->addChild( model5 );
 	_aBuffer->setTransparencyEnable( *xformNode );
-
+	//_aBuffer->setFragmentAlpha(.1);
+	
 
     // For gamepad speed control
     _moveRate = _root->getBound()->getRadius();
@@ -181,7 +183,7 @@ bool JagModel::startup( const unsigned int numContexts )
 
     // Prepare for culling.
     jagSG::FrustumCullDistributionVisitor fcdv;
-    _root->accept( fcdv );
+    //_root->accept( fcdv );
     jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
 
@@ -213,7 +215,7 @@ bool JagModel::startup( const unsigned int numContexts )
     _opaqueFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _opaqueFBO->setViewport( 0, 0, _width, _height );
     _opaqueFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    _opaqueFBO->setClearColor( .15f, .1f, .5f, 0.f ); // Must clear alpha to 0 for glow.
+    _opaqueFBO->setClearColor( 1.0f, 1.0f, 1.0f, 0.f ); // Must clear alpha to 0 for glow.
     _opaqueFBO->addAttachment( GL_DEPTH_ATTACHMENT, _depthBuffer );
     _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT0, _opaqueBuffer );
     _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT1, _secondaryBuffer );
@@ -324,8 +326,10 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
     jagMx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
 
     jagSG::CollectionVisitor& collect( getCollectionVisitor() );
-	if(_firstFrame)
+	if(_firstFrame) {
 	    collect.reset();
+		_aBuffer->setFragmentAlpha(.05);
+	}
 
     gmtl::Matrix44d viewMatrix;
     {
