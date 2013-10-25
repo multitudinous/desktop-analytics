@@ -131,7 +131,7 @@ void GLWidget::resizeGL( int w, int h )
 
 void GLWidget::toggleNode() {
 	//di->toggleSecondNodeMask();
-//	di->toggleNodeByName(ui.lineEdit->text().toLatin1().constData());
+	di->toggleNodeByName(ui.lineEdit->text().toLatin1().constData());
 	di->setABufferParams();
 	updateGL();
 }
@@ -363,7 +363,7 @@ int main( int argc, char** argv )
         return( 1 );
 	ui.renderwidget->show();
 	ui.pushButton->show();
-	//QObject::connect(ui.pushButton, SIGNAL(clicked()), ui.renderwidget, SLOT(dosomething()));
+	QObject::connect(ui.pushButton, SIGNAL(clicked()), ui.renderwidget, SLOT(dosomething()));
 	QObject::connect(ui.toggleNodeButton, SIGNAL(clicked()), ui.renderwidget, SLOT(toggleNode()));
 	
 	window->show();

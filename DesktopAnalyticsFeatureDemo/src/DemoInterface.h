@@ -30,6 +30,7 @@
 #include <jagMx/MxCore.h>
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/LogMacros.h>
+#include "ToggleByNameVisitor.h"
 
 #include <gmtl/gmtl.h>
 
@@ -74,7 +75,7 @@ public:
 
     void setContinuousRedraw( bool redraw=true ) { _continuousRedraw = redraw; }
     bool getContinuousRedraw() { return( _continuousRedraw ); }
-
+	
     /** Called for each context, after the context has been created. */
     virtual bool init() = 0;
     /** Called to render a frame. */

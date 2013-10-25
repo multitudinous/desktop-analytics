@@ -10,6 +10,12 @@
     <height>1059</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>4</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -25,8 +31,14 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>200</width>
+        <width>300</width>
         <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>16777215</height>
        </size>
       </property>
       <property name="frameShape">
@@ -84,16 +96,6 @@
         <string>PushButton</string>
        </property>
       </widget>
-      <widget class="QCalendarWidget" name="calendarWidget">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>90</y>
-         <width>631</width>
-         <height>501</height>
-        </rect>
-       </property>
-      </widget>
      </widget>
     </item>
     <item>
@@ -122,7 +124,6 @@
       <property name="autoFillBackground">
        <bool>true</bool>
       </property>
-      <zorder>frame_2</zorder>
      </widget>
     </item>
    </layout>

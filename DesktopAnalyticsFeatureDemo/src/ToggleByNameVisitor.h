@@ -74,45 +74,8 @@ public:
 		
 		
 
-		if(node.getUserDataName().find(_name) != std::string::npos || belowHighlight) {
-			if(node.getUserDataName().find(_name) != std::string::npos) {
-				hlthisnode = true;
-				belowHighlight = true;
-			}
-			 jagDraw::UniformBlockPtr highlights( jagDraw::UniformBlockPtr(
-            new jagDraw::UniformBlock( "Highlight" ) ) );
-
-			 jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr(
-        new jagDraw::UniformSet() ) );
-
-		jagDraw::UniformPtr up1(new jagDraw::Uniform("hlo", true));
-		//highlights->addUniform(up1);
-		jagDraw::UniformPtr up2(new jagDraw::Uniform("hlc", gmtl::Vec4f(1,0,1,.5)));
-		//highlights->addUniform(up2);
-		jagDraw::CommandMapPtr cmp = node.getOrCreateCommandMap();
-		//ubsp->insert(highlights);
-		usp->insert(up1);
-		usp->insert(up2);
-		cmp->insert(usp);
-		node.setCommandMap(cmp);
-		}
-		else {
-			 jagDraw::UniformBlockPtr highlights( jagDraw::UniformBlockPtr(
-            new jagDraw::UniformBlock( "Highlight" ) ) );
-
-			 jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr(
-        new jagDraw::UniformSet() ) );
-
-		jagDraw::UniformPtr up1(new jagDraw::Uniform("hlo", false));
-		//highlights->addUniform(up1);
-		jagDraw::UniformPtr up2(new jagDraw::Uniform("hlc", gmtl::Vec4f(1,0,1,.5)));
-		//highlights->addUniform(up2);
-		jagDraw::CommandMapPtr cmp = node.getOrCreateCommandMap();
-		//ubsp->insert(highlights);
-		usp->insert(up1);
-		usp->insert(up2);
-		cmp->insert(usp);
-		node.setCommandMap(cmp);
+		if(node.getUserDataName().find(_name) != std::string::npos ) {
+			node.setNodeMask(!node.getNodeMask());
 		}
 		checkMaskAndTraverse(node);
 		if(hlthisnode)

@@ -44,6 +44,10 @@ public:
 		return _updateMutex;
 	}
 
+	void toggleNodeByName(std::string name) {
+		jagSG::ToggleByNameVisitor tbnm(this->_root, name);
+	}
+
     // Return a value to bontrol base gamepad move rate in the scene.
     virtual double getMoveRate() const
     {

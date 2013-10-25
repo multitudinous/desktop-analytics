@@ -30,6 +30,7 @@
 #include <jagSG/CollectionVisitor.h>
 #include <jagSG/Node.h>
 #include <jagSG/SmallFeatureCallback.h>
+
 #include <jagDisk/ReadWrite.h>
 #include <jagBase/Profile.h>
 #include <jagBase/Version.h>
@@ -186,6 +187,9 @@ bool JagModel::startup( const unsigned int numContexts )
     //_root->accept( fcdv );
     jagSG::SmallFeatureDistributionVisitor sfdv;
     _root->accept( sfdv );
+
+	jagSG::NodeMaskCullDistributionVisitor nmcdv;
+	_root->accept(nmcdv);
 
     // Optimize VAO and element buffers.
     //jagUtil::BufferAggregationVisitor bav( _root );
