@@ -69,9 +69,13 @@ int main( int argc, char* argv[] )
         outDir = argv[ 2 ];
     }
 
+    boost::filesystem::path exePath;
+    exePath = boost::filesystem::path( argv[ 0 ] );
+    osgDB::FilePathList& fileList = osgDB::getDataFilePathList();
+    fileList.push_back( exePath.parent_path().string() );
+
     osgDB::Registry::instance()->loadLibrary( "osgdb_PolyTrans.dll" );
 
-    
     // Set up a datamanager to test persistence
     DataManager manager;
     DataAbstractionLayerPtr cache( new NullCache );
@@ -110,7 +114,21 @@ int main( int argc, char* argv[] )
     {
         boost::filesystem::path p( argv[ 1 ] );
         outPath = boost::filesystem::path( argv[ 2 ] );
-        outPath += p.filename();
+        if( !boost::filesystem::exists( outPath ) )
+        {
+            std::cout << "\nDirectory not found: "
+                << outPath.string() << " so we are making it." << std::endl;
+            try
+            {
+                boost::filesystem::create_directory( outPath );
+            }
+            catch( const std::exception& ex )
+            {
+                std::cout << ex.what() << std::endl;
+            }
+        }
+
+        outPath /= p.filename();
         outPath.replace_extension( "ive" );
     }
 
@@ -118,7 +136,7 @@ int main( int argc, char* argv[] )
     if( !boost::filesystem::exists( tempDirPath ) )
     {
         std::cout << "\nDirectory not found: "
-            << tempDirPath.string() << std::endl;
+            << tempDirPath.string() << " so we are making it." << std::endl;
         try
         {
             boost::filesystem::create_directory( tempDirPath );
