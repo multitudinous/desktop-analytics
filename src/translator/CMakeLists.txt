@@ -20,3 +20,6 @@ target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${crunchstore_LIBRARIES})
 
 include(VESModuleInstall)
 
+install(FILES ptconfigfile.txt 
+        DESTINATION ${VES_INSTALL_BINDIR}
+        COMPONENT runtime)
