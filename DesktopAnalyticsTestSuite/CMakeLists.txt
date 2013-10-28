@@ -132,6 +132,7 @@ include( CMakeMacros )
 
 add_subdirectory( src )
 add_subdirectory( perftests )
+add_subdirectory( tritest )
 
 #install pdb files for release with debug info builds
 #if( MSVC )
