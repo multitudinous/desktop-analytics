@@ -115,6 +115,7 @@ using namespace std;
 //LOCAL INCLUDES REPLACE VESUITE FUNCTIONALITY
 #include "RemoveNodeNameVisitor.h"
 #include "HighlightNodeByNamesVisitor.h"
+#include "ToggleByNamesVisitor.h"
 
 #include "JagModel.h"
 
@@ -1792,6 +1793,16 @@ void WarrantyToolGP::ToggleUnselected( bool const& checked )
             }
         }
     }*/
+
+
+	//new version
+	if(checked) {
+		jagSG::ToggleByNamesVisitor tbnv(m_cadRootNode, false, lowerCasePartNumbers);
+	}
+	else {
+		//toggle nodes one
+		jagSG::ToggleByNamesVisitor tbnv(m_cadRootNode, true, lowerCasePartNumbers);
+	}
 
 
 }

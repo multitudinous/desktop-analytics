@@ -51,7 +51,7 @@ class  ToggleByNamesVisitor : public Visitor
 {
 public:
 	ToggleByNamesVisitor();
-    ToggleByNamesVisitor( jagSG::NodePtr node, std::vector<std::string> names );
+    ToggleByNamesVisitor( jagSG::NodePtr node,  bool state, std::vector<std::string> names );
     ToggleByNamesVisitor( const ToggleByNamesVisitor& rhs );
     virtual ~ToggleByNamesVisitor();
 
@@ -110,6 +110,7 @@ protected:
 	
     unsigned int _currentID;
     bool belowHighlight;
+	bool _state;
 
    std::vector<std::string> _names;
 };
