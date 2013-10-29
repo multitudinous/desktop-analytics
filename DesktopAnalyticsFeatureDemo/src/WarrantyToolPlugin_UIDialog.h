@@ -43,7 +43,7 @@
 #include <string>
 #include <vector>
 #include <map>
-
+#include <iostream>
 //#include <osg/Node>
 
 #include <switchwire/ScopedConnectionList.h>
@@ -66,6 +66,10 @@ public:
     void ParseDataFile( const std::string& csvFilename );
     void ParseDataBase( const std::string& csvFilename );
     void OnDataLoad( std::string const& fileName );
+
+	void wtf(const bool& wtf) {
+		std::cout << "SIGNAL RECIEVED" << std::endl;
+	}
 
 protected:
     void changeEvent(QEvent *e);

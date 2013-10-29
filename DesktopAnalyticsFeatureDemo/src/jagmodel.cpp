@@ -290,6 +290,11 @@ bool JagModel::startup( const unsigned int numContexts )
     // Tell scene graph how many contexts to expect.
     _root->setMaxContexts( numContexts );
 
+	//create the warranty tool graphical side
+	wt = new warrantytool::WarrantyToolGP(_root);
+
+	wt->InitializeNode();
+
 
     return( true );
 }

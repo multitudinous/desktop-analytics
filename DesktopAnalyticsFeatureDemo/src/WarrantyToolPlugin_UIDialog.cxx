@@ -177,6 +177,11 @@ WarrantyToolPlugin_UIDialog::WarrantyToolPlugin_UIDialog(QWidget *parent) :
                       void( const std::string& ),
                       &WarrantyToolPlugin_UIDialog::PartSelected,
                       m_connections, any_SignalType, normal_Priority );
+
+	CONNECTSIGNALS_1( "%ToggleUnselected",
+                      void( const bool& ),
+                      &WarrantyToolPlugin_UIDialog::wtf,
+                      m_connections, any_SignalType, normal_Priority );
 }
 ////////////////////////////////////////////////////////////////////////////////
 void WarrantyToolPlugin_UIDialog::on_m_fileBrowseButton_clicked()
@@ -1094,6 +1099,7 @@ void WarrantyToolPlugin_UIDialog::on_m_mouseSelection_clicked( bool checked )
 void WarrantyToolPlugin_UIDialog::on_m_toggleUnselected_clicked( bool checked )
 {
     m_connectToggleUnselectedSignal.signal( checked );
+	std::cout << "SHOULD HAVE EMITTED TOGGLEUNSELECTED SIGNAL" << std::endl;
 }
 ////////////////////////////////////////////////////////////////////////////////
 void WarrantyToolPlugin_UIDialog::on_m_clear_clicked()

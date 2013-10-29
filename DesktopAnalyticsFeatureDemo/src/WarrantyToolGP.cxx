@@ -1747,7 +1747,7 @@ void WarrantyToolGP::ToggleUnselected( bool const& checked )
         std::cout << "m_cadRootNode is invalid" << std::endl << std::flush;
         return;
     }*/
-
+	std::cout << "in ToggleUnselected: how does it work?" << std::endl;
     std::vector< std::string > lowerCasePartNumbers;
     std::string partNum;
     if( m_joinedPartNumbers.size() == 0)
@@ -1768,7 +1768,7 @@ void WarrantyToolGP::ToggleUnselected( bool const& checked )
             lowerCasePartNumbers.push_back( partNum );
         }
     }
-
+	std::cout << lowerCasePartNumbers.size() << " part numbers" << std::endl;
 	//Aaron: If I understand this correctly the dealing with child nodes is only because of the wonky node structure in a 
 	//VES/OSG application. Here we can always know where the root of the CAD tree is and only deal with it.
     /*size_t numChildren = m_cadRootNode->getNumChildren();

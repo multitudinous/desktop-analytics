@@ -78,4 +78,7 @@ protected:
 	bool _firstFrame;
 
     int _width, _height;
+
+	//warranty tool graphical side object;
+	warrantytool::WarrantyToolGP * wt;
 };
