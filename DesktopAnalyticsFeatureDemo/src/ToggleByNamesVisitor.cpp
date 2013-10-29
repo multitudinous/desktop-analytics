@@ -65,12 +65,12 @@ namespace jagSG {
 	
 
 
-ToggleByNamesVisitor::ToggleByNamesVisitor( jagSG::NodePtr node, std::string name )
+ToggleByNamesVisitor::ToggleByNamesVisitor( jagSG::NodePtr node, std::vector<std::string> names )
   : Visitor( "ToggleByName" )
     
 {
     reset();
-	_name = name;
+	_names = names;
 	belowHighlight = false;
     node->accept( *this );
 }

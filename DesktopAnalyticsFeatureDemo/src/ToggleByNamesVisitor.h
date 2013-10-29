@@ -51,7 +51,7 @@ class  ToggleByNamesVisitor : public Visitor
 {
 public:
 	ToggleByNamesVisitor();
-    ToggleByNamesVisitor( jagSG::NodePtr node, std::string name );
+    ToggleByNamesVisitor( jagSG::NodePtr node, std::vector<std::string> names );
     ToggleByNamesVisitor( const ToggleByNamesVisitor& rhs );
     virtual ~ToggleByNamesVisitor();
 
@@ -72,9 +72,15 @@ public:
 		
 		MatrixStackHelper msh( *this, node.getTransform() );
 		
-		
+		bool foundName = false;
 
-		if(node.getUserDataName().find(_name) != std::string::npos ) {
+		//this is not the ideal way to do this
+		BOOST_FOREACH(std::string name, _names) {
+		if(node.getUserDataName().find(name) != std::string::npos ) {
+			foundName = true;
+		}	
+		}
+		if(foundName ) {
 			node.setNodeMask(!node.getNodeMask());
 		}
 		checkMaskAndTraverse(node);
@@ -105,7 +111,7 @@ protected:
     unsigned int _currentID;
     bool belowHighlight;
 
-   std::string _name;
+   std::vector<std::string> _names;
 };
 
 typedef jagBase::ptr< jagSG::ToggleByNamesVisitor >::shared_ptr ToggleByNamesVisitorPtr;
