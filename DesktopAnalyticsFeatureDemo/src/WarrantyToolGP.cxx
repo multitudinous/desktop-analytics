@@ -1736,58 +1736,64 @@ void WarrantyToolGP::ToggleUnselected( bool const& checked )
 {
 
 
-	//NEEDS IMPLEMENTATION
-    //m_cadRootNode = mModel->GetModelCADHandler()->
-    //    GetAssembly( mModel->GetModelCADHandler()->GetRootCADNodeID() );
-    //if( !m_cadRootNode )
-    //{
-    //    std::cout << "m_cadRootNode is invalid" << std::endl << std::flush;
-    //    return;
-    //}
+	
 
-    //std::vector< std::string > lowerCasePartNumbers;
-    //std::string partNum;
-    //if( m_joinedPartNumbers.size() == 0)
-    //{
-    //    for( size_t i = 0; i < m_assemblyPartNumbers.size(); ++i )
-    //    {
-    //        partNum = m_assemblyPartNumbers.at( i );
-    //        boost::algorithm::to_lower( partNum );
-    //        lowerCasePartNumbers.push_back( partNum );
-    //    }
-    //}
-    //else
-    //{
-    //    for( size_t i = 0; i < m_joinedPartNumbers.size(); ++i )
-    //    {
-    //        partNum = m_joinedPartNumbers.at( i );
-    //        boost::algorithm::to_lower( partNum );
-    //        lowerCasePartNumbers.push_back( partNum );
-    //    }
-    //}
+	//this should be commented out because not needed in jag version 
+    /*m_cadRootNode;// = mModel->GetModelCADHandler()->
+        GetAssembly( mModel->GetModelCADHandler()->GetRootCADNodeID() );
+    if( !m_cadRootNode )
+    {
+        std::cout << "m_cadRootNode is invalid" << std::endl << std::flush;
+        return;
+    }*/
 
-    //size_t numChildren = m_cadRootNode->getNumChildren();
-    //for( size_t i = 0; i < numChildren; ++i )
-    //{
-    //    osg::Group* childNode = m_cadRootNode->getChild( i )->asGroup();
-    //    unsigned int nodeMask = childNode->getNodeMask();
-    //    if( nodeMask )
-    //    {
-    //        //We know there is only 1 child because we are dealing 
-    //        //with CADEntity
-    //        osg::Node* tempChild = childNode->getChild( 0 );
-    //        if( checked )
-    //        {                
-    //            ves::xplorer::scenegraph::util::ToggleNodesVisitor
-    //                toggleNodes( tempChild, false, lowerCasePartNumbers );
-    //        }
-    //        else
-    //        {
-    //            ves::xplorer::scenegraph::util::ToggleNodesVisitor
-    //                toggleNodes( tempChild, true, lowerCasePartNumbers );
-    //        }
-    //    }
-    //}
+    std::vector< std::string > lowerCasePartNumbers;
+    std::string partNum;
+    if( m_joinedPartNumbers.size() == 0)
+    {
+        for( size_t i = 0; i < m_assemblyPartNumbers.size(); ++i )
+        {
+            partNum = m_assemblyPartNumbers.at( i );
+            boost::algorithm::to_lower( partNum );
+            lowerCasePartNumbers.push_back( partNum );
+        }
+    }
+    else
+    {
+        for( size_t i = 0; i < m_joinedPartNumbers.size(); ++i )
+        {
+            partNum = m_joinedPartNumbers.at( i );
+            boost::algorithm::to_lower( partNum );
+            lowerCasePartNumbers.push_back( partNum );
+        }
+    }
+
+	//Aaron: If I understand this correctly the dealing with child nodes is only because of the wonky node structure in a 
+	//VES/OSG application. Here we can always know where the root of the CAD tree is and only deal with it.
+    /*size_t numChildren = m_cadRootNode->getNumChildren();
+    for( size_t i = 0; i < numChildren; ++i )
+    {
+        osg::Group* childNode = m_cadRootNode->getChild( i )->asGroup();
+        unsigned int nodeMask = childNode->getNodeMask();
+        if( nodeMask )
+        {
+            //We know there is only 1 child because we are dealing 
+            //with CADEntity
+            osg::Node* tempChild = childNode->getChild( 0 );
+            if( checked )
+            {                
+                ves::xplorer::scenegraph::util::ToggleNodesVisitor
+                    toggleNodes( tempChild, false, lowerCasePartNumbers );
+            }
+            else
+            {
+                ves::xplorer::scenegraph::util::ToggleNodesVisitor
+                    toggleNodes( tempChild, true, lowerCasePartNumbers );
+            }
+        }
+    }*/
+
+
 }
 ////////////////////////////////////////////////////////////////////////////////
 void WarrantyToolGP::HighlightPart( const std::string& partNumber )
