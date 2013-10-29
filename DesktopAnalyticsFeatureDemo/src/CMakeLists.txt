@@ -10,6 +10,7 @@ ADD_EXECUTABLE( desktopanalytics
     jagmodel.cpp
     qtSupport.cpp
     ToggleByNameVisitor.cpp
+    ToggleByNamesVisitor.cpp
     HighlightNodeByNamesVisitor.cpp
     WarrantyToolGP.cxx
     WarrantyToolPlugin_UIDialog.cxx
@@ -19,6 +20,7 @@ ADD_EXECUTABLE( desktopanalytics
     AbufferCallBack.cpp
     csvparser.cpp
     ToggleByNameVisitor.h
+    ToggleByNamesVisitor.h
     HighlightNodeByNamesVisitor.h
     RemoveNodeNameVisitor.h
     AbufferCallBack.h
