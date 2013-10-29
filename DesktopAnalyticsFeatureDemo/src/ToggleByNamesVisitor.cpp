@@ -18,7 +18,7 @@
 *
 *************** <auto-copyright.pl END do not edit this line> ***************/
 
-#include "ToggleByNameVisitor.h"
+#include "ToggleByNamesVisitor.h"
 #include <jagSG/Node.h>
 #include <jagDraw/Node.h>
 #include <jagDraw/BufferObject.h>
@@ -65,7 +65,7 @@ namespace jagSG {
 	
 
 
-ToggleByNameVisitor::ToggleByNameVisitor( jagSG::NodePtr node, std::string name )
+ToggleByNamesVisitor::ToggleByNamesVisitor( jagSG::NodePtr node, std::string name )
   : Visitor( "ToggleByName" )
     
 {
@@ -74,7 +74,7 @@ ToggleByNameVisitor::ToggleByNameVisitor( jagSG::NodePtr node, std::string name 
 	belowHighlight = false;
     node->accept( *this );
 }
-ToggleByNameVisitor::ToggleByNameVisitor( const ToggleByNameVisitor& rhs )
+ToggleByNamesVisitor::ToggleByNamesVisitor( const ToggleByNamesVisitor& rhs )
   : Visitor( rhs )
     
 {
@@ -82,13 +82,13 @@ ToggleByNameVisitor::ToggleByNameVisitor( const ToggleByNameVisitor& rhs )
 
     reset();
 }
-ToggleByNameVisitor::~ToggleByNameVisitor()
+ToggleByNamesVisitor::~ToggleByNamesVisitor()
 {
 }
 
 
 
-void ToggleByNameVisitor::reset()
+void ToggleByNamesVisitor::reset()
 {
     JAG3D_TRACE( "reset()" );
 	

@@ -47,13 +47,13 @@ namespace jagSG {
 \brief TBD
 \details TBD
 */
-class  ToggleByNameVisitor : public Visitor
+class  ToggleByNamesVisitor : public Visitor
 {
 public:
-	ToggleByNameVisitor();
-    ToggleByNameVisitor( jagSG::NodePtr node, std::string name );
-    ToggleByNameVisitor( const ToggleByNameVisitor& rhs );
-    virtual ~ToggleByNameVisitor();
+	ToggleByNamesVisitor();
+    ToggleByNamesVisitor( jagSG::NodePtr node, std::string name );
+    ToggleByNamesVisitor( const ToggleByNamesVisitor& rhs );
+    virtual ~ToggleByNamesVisitor();
 
 
    
@@ -108,7 +108,7 @@ protected:
    std::string _name;
 };
 
-typedef jagBase::ptr< jagSG::ToggleByNameVisitor >::shared_ptr ToggleByNameVisitorPtr;
+typedef jagBase::ptr< jagSG::ToggleByNamesVisitor >::shared_ptr ToggleByNamesVisitorPtr;
 
 
 // jagSG
