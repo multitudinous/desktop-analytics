@@ -1747,7 +1747,7 @@ void WarrantyToolGP::ToggleUnselected( bool const& checked )
         std::cout << "m_cadRootNode is invalid" << std::endl << std::flush;
         return;
     }*/
-	std::cout << "in ToggleUnselected: how does it work?" << std::endl;
+
     std::vector< std::string > lowerCasePartNumbers;
     std::string partNum;
     if( m_joinedPartNumbers.size() == 0)
