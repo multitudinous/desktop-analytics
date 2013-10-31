@@ -613,9 +613,9 @@ void JagModel::pickEvent(gmtl::Vec4d pos, int w, int h) {
 	}
 
 	//these are unrelated and are only used for debug information about the path of picking
-	std::cout << iv.getNumTriangles() << " TRIANGLES " << std::endl;
+	/*std::cout << iv.getNumTriangles() << " TRIANGLES " << std::endl;
 	std::cout << iv.getNumNodes() << " NODES " << std::endl;
-	std::cout << iv.getNumDrawables() << " DRAWCOMMANDS " << std::endl;
+	std::cout << iv.getNumDrawables() << " DRAWCOMMANDS " << std::endl;*/
 
 
 
