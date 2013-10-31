@@ -48,6 +48,8 @@ public:
 		jagSG::ToggleByNameVisitor tbnm(this->_root, name);
 	}
 
+	void JagModel::pickEvent(gmtl::Vec4d pos, int w, int h);
+
     // Return a value to bontrol base gamepad move rate in the scene.
     virtual double getMoveRate() const
     {

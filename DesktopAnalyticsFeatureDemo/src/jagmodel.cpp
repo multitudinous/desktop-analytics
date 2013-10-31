@@ -411,7 +411,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 			double minNear, maxFar;
 			collect.getNearFar( minNear, maxFar );
 			drawGraph->setViewProj( viewMatrix, mxCore->computeProjection( minNear, maxFar ) );
-
+			tform = drawGraph->getTransformCallback()->getTransform();
 			// The ABuffer object handles rendering.
 			// This line replaces drawGraph->execute( drawInfo );
 			_aBuffer->renderFrame( collect, drawInfo );
@@ -561,4 +561,62 @@ void JagModel::doThreadedCollection() {
 		*/
 
 	}
+}
+
+void JagModel::pickEvent(gmtl::Vec4d pos, int w, int h) {
+
+
+
+
+	gmtl::Matrix44d fulltform = tform.getModelViewProjInv();
+	gmtl::Vec4d a, b;
+	pos[0] = 2*pos[0]/((double)w) -1.0;
+	pos[1] = 2*pos[1]/((double)(h)) -1.0;
+	pos[2] = -1.0;// - 2.0*z;
+	//pos[2] = 1.0;
+	//gmtl::xform(a, fulltform, pos4d);
+	//a = pos4d * fulltform;
+	a = fulltform * pos;
+	pos[2] = 1.0;
+	//gmtl::xform(b, fulltform, pos4d);
+	b = fulltform * pos;
+	a = a/a[3];
+	b = b/b[3];
+
+
+	gmtl::Vec3d aa, bb;
+	aa[0] = a[0];
+	aa[1] = a[1];
+	aa[2] = a[2];
+	bb[0] = b[0];
+	bb[1] = b[1];
+	bb[2] = b[2];
+
+	const jagDraw::jagDrawContextID contextID( jagDraw::ContextSupport::instance()->getActiveContext() );
+	jagDraw::DrawInfo& drawInfo( getDrawInfo( contextID ) );
+
+	jagMx::MxCorePtr mxCore( _mxCore._data[ contextID ] );
+	gmtl::Vec3d camPos = mxCore->getPosition();
+	std::cout << camPos << " camPos " << std::endl;
+	jagSG::IntersectVisitor iv(_root, gmtl::Rayd(camPos,bb-aa));
+	gmtl::Vec3d transPos;
+	if (iv.getHits().size() >0) {
+		std::cout << iv.getHits().size() << std::endl;
+		gmtl::Vec3f posf = iv.getHits()[0].hitPosition;
+		transPos[0] = posf[0];
+		transPos[1] = posf[1];
+		transPos[2] = posf[2];
+		//transPos[3] = 1.0;
+		std::cout << transPos << " TRANSPOS" << std::endl;
+
+
+	}
+
+	//these are unrelated and are only used for debug information about the path of picking
+	std::cout << iv.getNumTriangles() << " TRIANGLES " << std::endl;
+	std::cout << iv.getNumNodes() << " NODES " << std::endl;
+	std::cout << iv.getNumDrawables() << " DRAWCOMMANDS " << std::endl;
+
+
+
 }
