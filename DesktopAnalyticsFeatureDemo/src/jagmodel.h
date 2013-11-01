@@ -60,6 +60,10 @@ public:
 	*/
 	void doThreadedCollection();
 
+	jagUtil::ABufferPtr getABuffer() {
+		return _aBuffer;
+	}
+
 protected:
     std::string _fileName;
 	bool _useFirst;
@@ -78,7 +82,7 @@ protected:
 	jagSG::CollectionVisitor cva, cvb, currentCV;
 	boost::mutex _updateMutex, _fm, _sm;
 	bool _firstFrame;
-
+	
     int _width, _height;
 
 	//warranty tool graphical side object;

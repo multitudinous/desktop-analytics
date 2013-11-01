@@ -54,7 +54,7 @@ namespace jagSG {
 	
 
 
-HighlightNodeByNamesVisitor::HighlightNodeByNamesVisitor( jagSG::NodePtr node, const std::vector<std::string>& nodeNames, bool addGlow, bool ignoreCase, gmtl::Vec4d glowColor )
+HighlightNodeByNamesVisitor::HighlightNodeByNamesVisitor( jagSG::NodePtr node, const std::vector<std::string>& nodeNames, jagUtil::ABufferPtr aBuffer,bool addGlow, bool ignoreCase, gmtl::Vec4d glowColor )
 	:Visitor("HIGHLIGHTBYNAMES")    
 {
     reset();
@@ -63,6 +63,7 @@ HighlightNodeByNamesVisitor::HighlightNodeByNamesVisitor( jagSG::NodePtr node, c
 	_addGlow = addGlow;
 	_ignoreCase = ignoreCase;
 	_glowColor = glowColor;
+	_aBuffer = aBuffer;
 	
 	/*for(int i = 1; i < 2; i++) {
 		std::cout << nodeNames[i] << " TOGGLED" << std::endl;

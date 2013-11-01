@@ -34,6 +34,7 @@
 #include <jagBase/ptr.h>
 #include <gmtl/Ray.h>
 #include <gmtl/Xforms.h>
+#include <jagUtil/ABuffer.h>
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -56,7 +57,7 @@ public:
 	//HighlightNodesByNameVisitor( osg::Node* node, const std::vector< std::string >& nodeNames,
     //                            bool addGlow = true, bool ignoreCase = false,
     //                            osg::Vec3 glowColor = osg::Vec3( 1.0, 0.0, 0.0 ) );
-    HighlightNodeByNamesVisitor( jagSG::NodePtr node, const std::vector<std::string>& nodeNames, bool addGlow = true, bool ignoreCase = false, gmtl::Vec4d glowColor = gmtl::Vec4d(1,0,0,1 ));
+    HighlightNodeByNamesVisitor( jagSG::NodePtr node, const std::vector<std::string>& nodeNames, jagUtil::ABufferPtr aBuffer, bool addGlow = true, bool ignoreCase = false, gmtl::Vec4d glowColor = gmtl::Vec4d(1,0,0,1 ));
     HighlightNodeByNamesVisitor( const HighlightNodeByNamesVisitor& rhs );
     virtual ~HighlightNodeByNamesVisitor();
 
@@ -107,20 +108,14 @@ public:
 				hlthisnode = true;
 				belowHighlight = true;
 			}
-			 jagDraw::UniformBlockPtr highlights( jagDraw::UniformBlockPtr(
-            new jagDraw::UniformBlock( "Highlight" ) ) );
-
-			 jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr(
-        new jagDraw::UniformSet() ) );
-			// std::cout << "ADDED GLOW" << std::endl;
-		jagDraw::UniformPtr up1(new jagDraw::Uniform("hlo", true));
-		//highlights->addUniform(up1);
-		jagDraw::UniformPtr up2(new jagDraw::Uniform("hlc", gmtl::Vec4f(1,0,1,.5)));
-		//highlights->addUniform(up2);
+		jagDraw::UniformPtr glowUniform( jagDraw::UniformPtr( new jagDraw::Uniform( "glowColor", gmtl::Point4f(1.f,1.f,0.f,.5f) ) ) );
+        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        usp->insert( glowUniform );
+        ///commands->insert( usp );
+		//_aBuffer->setTransparencyEnable(node, false);
 		jagDraw::CommandMapPtr cmp = node.getOrCreateCommandMap();
 		//ubsp->insert(highlights);
-		usp->insert(up1);
-		usp->insert(up2);
+		
 		cmp->insert(usp);
 		node.setCommandMap(cmp);
 		}
@@ -141,6 +136,7 @@ public:
 		usp->insert(up2);
 		cmp->insert(usp);
 		node.setCommandMap(cmp);
+		//_aBuffer->setTransparencyEnable(node, true);
 		}
 		checkMaskAndTraverse(node);
 		if(hlthisnode)
@@ -173,6 +169,7 @@ protected:
 	bool _addGlow;
 	gmtl::Vec4d _glowColor;
 	int numVisits;
+	 jagUtil::ABufferPtr _aBuffer;
   
    std::vector< std::string> _nodeNames;
 };

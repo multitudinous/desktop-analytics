@@ -1442,7 +1442,7 @@ void WarrantyToolGP::QueryTableAndHighlightParts(
         more = rs.moveNext();
     }
     jagSG::HighlightNodeByNamesVisitor 
-        highlight( m_cadRootNode, setOfParts, true, true, glowColor );
+		highlight( m_cadRootNode, setOfParts, di->getABuffer(), true, true, glowColor );
 
     if( m_currentStatement )
     {
@@ -1528,7 +1528,7 @@ void WarrantyToolGP::QueryInnerJoinAndHighlightParts( const std::string& querySt
 	{
 		boost::mutex::scoped_lock(di->getUpdateMutex());
 		jagSG::HighlightNodeByNamesVisitor 
-        highlight( m_cadRootNode, setOfParts, true, true );
+			highlight( m_cadRootNode, setOfParts,di->getABuffer(), true, true );
 	}
     if( m_currentStatement )
     {
@@ -1633,7 +1633,7 @@ void WarrantyToolGP::QueryUserDefinedAndHighlightParts( const std::string& query
 		boost::mutex::scoped_lock(di->getUpdateMutex());
 		
     jagSG::HighlightNodeByNamesVisitor 
-        highlightNodes( m_cadRootNode, setOfParts, true, true, nullGlowColor );
+		highlightNodes( m_cadRootNode, setOfParts, di->getABuffer(), true, true, nullGlowColor );
 	}
     if( m_currentStatement )
     {
@@ -1824,14 +1824,14 @@ void WarrantyToolGP::HighlightPart( const std::string& partNumber )
 
     gmtl::Vec4d nullGlowColor( 0.57255, 0.34118, 1.0,1.0 );
     jagSG::HighlightNodeByNamesVisitor
-        highlightNodes( m_cadRootNode, m_assemblyPartNumbers, true, true, nullGlowColor );
+		highlightNodes( m_cadRootNode, m_assemblyPartNumbers,di->getABuffer(), true, true, nullGlowColor );
 
     //Highlight part
     m_lastPartNumber = partNumber;
 	std::vector<std::string> partList;
 	partList.push_back(partNumber);
     jagSG::HighlightNodeByNamesVisitor
-        highlight( m_cadRootNode, partList, !m_lastPartNumber.empty(), true );
+		highlight( m_cadRootNode, partList,di->getABuffer(), !m_lastPartNumber.empty(), true );
     
 	
 	
@@ -1876,13 +1876,13 @@ void WarrantyToolGP::HighlightParts( const std::vector<std::string>& partNumbers
     
     gmtl::Vec4d nullGlowColor( 0.57255, 0.34118, 1.0,1.0 );
     jagSG::HighlightNodeByNamesVisitor
-        highlightNodes( m_cadRootNode, partNumbers, true, true, nullGlowColor );
+		highlightNodes( m_cadRootNode, partNumbers, di->getABuffer(),true, true, nullGlowColor );
 
     m_lastPartNumber = partNumbers.back();
 	std::vector<std::string> partList;
 	partList.push_back(m_lastPartNumber);
     jagSG::HighlightNodeByNamesVisitor
-        highlight( m_cadRootNode, partList, !m_lastPartNumber.empty(), true );
+		highlight( m_cadRootNode, partList, di->getABuffer(),!m_lastPartNumber.empty(), true );
 }
 ////////////////////////////////////////////////////////////////////////////////
 void WarrantyToolGP::UpdateSelectionLine()

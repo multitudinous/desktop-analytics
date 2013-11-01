@@ -154,7 +154,7 @@ bool JagModel::startup( const unsigned int numContexts )
     // Add model instance as opaque
     _root.reset( new jagSG::Node );
     _root->addChild( model );
-	gmtl::setScale(model->getTransform(), .01);
+	gmtl::setScale(model->getTransform(), .2);
     // Add translated model instance for ABuffer transparency
     jagSG::NodePtr xformNode( jagSG::NodePtr( new jagSG::Node() ) );
     gmtl::setTrans( xformNode->getTransform(), gmtl::Vec3d( 0., model->getBound()->getRadius() * -1.5, 0. ) );
@@ -174,7 +174,7 @@ bool JagModel::startup( const unsigned int numContexts )
 	  xformNode->addChild( model3 );
 	   xformNode->addChild( model4 );
     xformNode->addChild( model5 );
-	_aBuffer->setTransparencyEnable( *xformNode );
+	//_aBuffer->setTransparencyEnable( *xformNode );
 	//_aBuffer->setFragmentAlpha(.1);
 	
 
@@ -213,13 +213,23 @@ bool JagModel::startup( const unsigned int numContexts )
     jagDraw::CommandMapPtr commands( _root->getOrCreateCommandMap() );
     commands->insert( prog );
 
+
+	 {
+        // Root node needs a default value for glowColor uniform.
+        jagDraw::UniformPtr glowUniform( jagDraw::UniformPtr( new jagDraw::Uniform( "glowColor", gmtl::Point4f(0.f,0.f,0.f,0.f) ) ) );
+        jagDraw::UniformSetPtr usp( jagDraw::UniformSetPtr( new jagDraw::UniformSet() ) );
+        usp->insert( glowUniform );
+        commands->insert( usp );
+    }
+
+
     // Create a framebuffer object. The color texture will store opaque
     // rendering. The depth texture is shared with ABuffer to avoid
     // rendering behind opaque geometry.
     _opaqueFBO.reset( new jagDraw::Framebuffer( GL_DRAW_FRAMEBUFFER ) );
     _opaqueFBO->setViewport( 0, 0, _width, _height );
     _opaqueFBO->setClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    _opaqueFBO->setClearColor( 1.0f, 1.0f, 1.0f, 0.f ); // Must clear alpha to 0 for glow.
+    _opaqueFBO->setClearColor( 1.0f, 0.0f, 1.0f, 0.f ); // Must clear alpha to 0 for glow.
     _opaqueFBO->addAttachment( GL_DEPTH_ATTACHMENT, _depthBuffer );
     _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT0, _opaqueBuffer );
     _opaqueFBO->addAttachment( GL_COLOR_ATTACHMENT1, _secondaryBuffer );
@@ -384,6 +394,7 @@ bool JagModel::frame( const gmtl::Matrix44d& view, const gmtl::Matrix44d& proj )
 			_aBuffer->renderFrame( collect, drawInfo );
 		}
 		else {
+			boost::mutex::scoped_lock(this->getUpdateMutex());
 			if(_useFirst) {
 			boost::mutex::scoped_lock(this->_fm);
 			// Execute the draw graph.
@@ -521,7 +532,8 @@ void JagModel::doThreadedCollection() {
 		gmtl::Matrix44d viewMatrix;
 		viewMatrix = tform.getView();
 
-		
+		{
+			boost::mutex::scoped_lock(this->getUpdateMutex());
 		if(this->_useFirst) {
 			boost::mutex::scoped_lock(this->_fm);
 			cva.reset();
@@ -544,6 +556,7 @@ void JagModel::doThreadedCollection() {
 			//currentDrawGraph = cvb.getDrawGraph();
 			
 			_useFirst = false;
+		}
 		}
 		//return;
 		/*cv.reset();
