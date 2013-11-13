@@ -7,6 +7,9 @@
 
 #include <osg/Node>
 
+#include <osgwTools/GeometryModifier.h>
+#include <osgwTools/Trianglizer.h>
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -16,6 +19,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "RemoveNodeNameVisitor.h"
+#include "ShareNodes.h"
+#include "RemoveByDesc.h"
 
 #include <crunchstore/Persistable.h>
 #include <crunchstore/Datum.h>
@@ -162,8 +167,35 @@ int main( int argc, char* argv[] )
         return 1;
     }
     
+    //Merge the primitive sets and make triangles
+    {
+        osgwTools::GeometryModifier gm( new osgwTools::Trianglizer() );
+        tempCADNode->accept( gm );
+    }
+    
+    //Remove repeated pt nodes
+    {
+        osg::Node::DescriptionList criteria;
+        criteria.push_back( "NUGRAF___AccountedCounter" );
+        //criteria.push_back( "AccountedCounter" );
+        criteria.push_back( "ok_int: -1" );
+        
+        RemoveByDesc rbd;
+        rbd.setDescriptions( criteria );
+        unsigned int count( rbd.execute( tempCADNode.get() ) );
+        std::cout << "Removed " << count << " nodes." << std::endl;
+    }
+
     //Remove crufty names from polytrans conversion
-    ves::xplorer::scenegraph::util::RemoveNodeNameVisitor polyTransCleanup( tempCADNode.get(), "", "" );
+    {
+        ves::xplorer::scenegraph::util::RemoveNodeNameVisitor polyTransCleanup( tempCADNode.get(), "", "" );
+    }
+
+    //Finally reparent repeated nodes
+    {
+        ShareNodes snv;
+        snv.execute( tempCADNode.get() );
+    }
 
     if( !osgDB::writeNodeFile( *tempCADNode.get(), outPath.string() ) )
     {

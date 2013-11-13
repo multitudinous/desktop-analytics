@@ -1,5 +1,7 @@
 file( GLOB srcs "*.cxx" )
+file( GLOB srcsCpp "*.cpp" )
 file( GLOB hdrs "*.h" )
+list(APPEND srcs ${srcsCpp})
 
 #set(VES_PRIVATE_HEADERS ${hdrs})
 set(VES_PUBLIC_HEADERS ${hdrs} )
@@ -17,9 +19,11 @@ target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${POCO_LIBRARIES})
 target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${OSG_LIBRARIES})
 target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
 target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${crunchstore_LIBRARIES})
+target_link_libraries(${VES_TARGET_NAME} LINK_PUBLIC ${OSGWORKS_LIBRARIES})
 
 include(VESModuleInstall)
 
 install(FILES ptconfigfile.txt 
         DESTINATION ${VES_INSTALL_BINDIR}
         COMPONENT runtime)
+

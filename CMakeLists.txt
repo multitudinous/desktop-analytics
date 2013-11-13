@@ -38,9 +38,15 @@ if( crunchstore_FOUND )
     include( ${crunchstore_USE_FILE} )
 endif(crunchstore_FOUND)
 
+find_package( osgWorks 0.1.0 REQUIRED)
+if( osgWorks_FOUND )
+    include( ${osgWorks_USE_FILE} )
+endif(osgWorks_FOUND)
+
 include_directories( 
     ${Boost_INCLUDE_DIRS}
-    ${POCO_INCLUDE_DIR})
+    ${POCO_INCLUDE_DIR}
+    ${osgWorks_INCLUDE_DIR})
 
 option(BUILD_EXAMPLE "Build example?" ON)
 
